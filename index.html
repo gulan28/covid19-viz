@@ -58,14 +58,14 @@
 		    color: #777;
 		}
 		.legend {
-			min-width: 150px;
+			min-width: 120px;
 			line-height: 20px;
 			color: #555;
 		}
 		.legend i {
 		    width: 16px;
 		    height: 16px;
-		    float: left;
+		    float: right;
 		    margin-right: 8px;
 		    opacity: 0.7;
 		}
@@ -222,7 +222,7 @@ info.update = function(props) {
 		: 'Hover over a state');
 	};
 
-var legend = L.control({position: 'bottomright'});
+var legend = L.control({position: 'bottomleft'});
 
 legend.onAdd = function(map) {
 	this._div = L.DomUtil.create('div', 'info legend');
