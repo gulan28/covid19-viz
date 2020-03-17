@@ -169,6 +169,15 @@ var lat, lng;
 var col_range = ['#ffeda0', '#f03b20'];
 var colorfunc = function(d) { return col_range[0] }
 
+// tile base layer from mapbox to give context
+var mapbox_token = 'pk.eyJ1IjoiZ3VsYW4yOCIsImEiOiJjazd2cGp5OGgwd21kM2xwMHV6ZjA3ZXNvIn0.1OeMxwjB5QV-2DgEhStX9w';
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token='+mapbox_token, {
+	maxZoom: 18,
+	id: 'gulan28/ck7vplv1i0tl91iqlb4oz6ofy',
+	tileSize: 512,
+	zoomOffset: -1
+}).addTo(map);
+
 // helper to get latest date from array
 function getLatestDate(dateArr) {
 	var dd, mm, yyyy, spl, newd;
@@ -343,7 +352,7 @@ function style(feature) {
 		opacity: 1,
 		color: 'white',
 		dashArray: '3',
-		fillOpacity: 0.7
+		fillOpacity: 0.6
 	};
 }
 
