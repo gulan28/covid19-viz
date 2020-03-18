@@ -275,7 +275,7 @@ legend.update = function() {
 		rmin = 0;
 		rmax = 100;
 	}
-	for (var i=rmin; i<=rmax; i+=Math.floor((rmax - rmin)/5)) {
+	for (var i=rmin; i<=rmax; i+=Math.ceil((rmax - rmin)/5)) {
 		intervals.push(i);
 	}
 	for (var i=0; i<intervals.length; i++) {
