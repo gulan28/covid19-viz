@@ -1,4 +1,6 @@
 var dataIndex = {
+ '6-3-2020': {file: 'data_6_3_2020.csv'},
+ '7-3-2020': {file: 'data_7_3_2020.csv'},
  '9-3-2020': {file: 'data_9_3_2020.csv'},
  '10-3-2020': {file: 'data_10_3_2020.csv'},
  '11-3-2020': {file: 'data_11_3_2020.csv'},
