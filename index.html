@@ -189,7 +189,6 @@
 	</footer>
 
 	<script type="text/javascript" src="stateGeoData.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
 	<script type="text/javascript">
 		var map = L.map('map', {
@@ -240,12 +239,14 @@
 			dates = [],
 			dateSelect = d3.select('#dateSelect');
 
-		let dateStarts = new moment("6-3-2020", "D-M-YYYY");
+		let dateStarts = new Date(2020, 2, 6);
+		//date ends one day prior to the date;
+		const dateEnds = new Date();
+		dateEnds.setDate(dateEnds.getDate() - 1);
 		do {
-			dates.unshift(dateStarts.format("D-M-YYYY"));
-			dateStarts.add(1, "days");
-
-		} while (dateStarts.isBefore());
+			dates.unshift(`${dateStarts.getDate()}-${dateStarts.getMonth()+1}-${dateStarts.getFullYear()}`);
+			dateStarts.setDate(dateStarts.getDate() + 1);
+		} while (dateStarts.getTime() < dateEnds.getTime());
 
 		selected_date = getLatestDate(dates);
 		// add dates to select
