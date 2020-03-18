@@ -188,8 +188,8 @@
 		</div>
 	</footer>
 
-	<script type="text/javascript" src="dataIndex.js"></script>
 	<script type="text/javascript" src="stateGeoData.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
 	<script type="text/javascript">
 		var map = L.map('map', {
@@ -239,10 +239,14 @@
 		var queue = [],
 			dates = [],
 			dateSelect = d3.select('#dateSelect');
-		Object.keys(dataIndex).forEach(function (key) {
-			dates.unshift(key);
-			selected_date = key;
-		});
+
+		let dateStarts = new moment("06-3-2020", "D-M-YYYY");
+		do{
+			dates.unshift(dateStarts.format("D-M-YYYY"));
+			dateStarts.add(1, "days");
+
+		}while(dateStarts.isBefore(moment().subtract(1, "days")));
+
 		selected_date = getLatestDate(dates);
 		// add dates to select
 		var opts = dateSelect.selectAll(null)
@@ -469,7 +473,7 @@
 				selected_date = date;
 				updateAll();
 			} else {
-				var filename = './data/' + dataIndex[date].file;
+				var filename = `./data/data_${date.replace(/-/g, "_")}.csv`;
 				d3.csv(filename).then(function (dat) {
 					data[date] = dat;
 					selected_date = date;
