@@ -240,12 +240,12 @@
 			dates = [],
 			dateSelect = d3.select('#dateSelect');
 
-		let dateStarts = new moment("06-3-2020", "D-M-YYYY");
-		do{
+		let dateStarts = new moment("6-3-2020", "D-M-YYYY");
+		do {
 			dates.unshift(dateStarts.format("D-M-YYYY"));
 			dateStarts.add(1, "days");
 
-		}while(dateStarts.isBefore(moment().subtract(1, "days")));
+		} while (dateStarts.isBefore());
 
 		selected_date = getLatestDate(dates);
 		// add dates to select
@@ -473,12 +473,16 @@
 				selected_date = date;
 				updateAll();
 			} else {
+
 				var filename = `./data/data_${date.replace(/-/g, "_")}.csv`;
 				d3.csv(filename).then(function (dat) {
 					data[date] = dat;
 					selected_date = date;
 					updateAll();
+				}).catch(function (err) {
+					alert("Data is not updated, please check after some time");
 				});
+
 			}
 		}
 
