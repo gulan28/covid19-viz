@@ -36,6 +36,9 @@
 		.lowmargin {
 			margin-bottom: 1px !important;
 		}
+		section {
+			padding: 3rem 0.8rem !important;
+		}
 		@media only screen and (max-width: 768px) {
 		  /* For mobile phones: */
 		  [class="mapcontainer"] {
@@ -193,16 +196,16 @@ function getLatestDate(dateArr) {
 }
 
 var selectedFeatureMap = {
-	'hospitalized_today': 'Number of people hospitalized today',
-	'total_hospitalized': 'Total number of people hospitalized',
-	'isolation': 'Total number of people under isolation',
-	'observation': 'Total number of people under observation',
+	'hospitalized_today': 'Number of people hospitalized today.<br/><small>ആശുപത്രിയിൽ ഇന്ന് പ്രവേശിപ്പിച്ചവർ.</small>',
+	'total_hospitalized': 'Total number of people hospitalized.<br/><small>മൊത്തം ആശുപത്രിയിൽ പ്രവേശിപ്പിച്ചവർ.</small>',
+	'isolation': 'Total number of people under isolation.<br/><small>മൊത്തം മാറ്റിപ്പാർപ്പിച്ചവർ.</small>',
+	'observation': 'Total number of people under observation.<br/><small>മൊത്തം നിരീക്ഷണത്തിൽ ഉള്ളവർ.</small>',
 };
 
 // load data
 var data = {},
 selected_date='',
-selected_feature='hospitalized_today';
+selected_feature='total_hospitalized';
 
 var queue = [],
 dates = [],
@@ -234,9 +237,9 @@ info.onAdd = function(map) {
 };
 
 info.update = function(props) {
-	this._div.innerHTML = '<h4>' + (selected_feature.length > 0 ? selectedFeatureMap[selected_feature]: 'Select a feature to display') + '</h4>' +  (props ?
-		'<b>' + props.district + '</b><br />' + props[selected_feature] + ' people'
-		: 'Hover over a state');
+	this._div.innerHTML = '<h5>' + (selected_feature.length > 0 ? selectedFeatureMap[selected_feature]: 'Select a feature to display') + '</h5>' +  (props ?
+		'<b>' + props.district + '</b><br/>' + props[selected_feature] + ' people'
+		: 'Click/touch a district.<br/><small>ഒരു ജില്ലയിൽ തൊടു.</small>');
 	};
 
 var legend = L.control({position: 'bottomleft'});
@@ -275,7 +278,7 @@ legend.update = function() {
 		rmin = 0;
 		rmax = 100;
 	}
-	for (var i=rmin; i<=rmax; i+=Math.floor((rmax - rmin)/5)) {
+	for (var i=rmin; i<=rmax; i+=Math.ceil((rmax - rmin)/5)) {
 		intervals.push(i);
 	}
 	for (var i=0; i<intervals.length; i++) {
