@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 	<title>Kerala districtwise COVID-19 data</title>
@@ -11,24 +12,28 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
 	<link rel="manifest" href="./favicon/site.webmanifest">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 
 	<!-- Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160729457-1"></script>
 	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
+		window.dataLayer = window.dataLayer || [];
 
-	  gtag('config', 'UA-160729457-1');
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-160729457-1');
 	</script>
 	<script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
-  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
 
 	<style>
-		html, body {
+		html,
+		body {
 			height: 100%;
 			margin: 0;
 		}
@@ -36,77 +41,93 @@
 		.lowmargin {
 			margin-bottom: 1px !important;
 		}
+
 		section {
 			padding-left: 0.8rem !important;
 			padding-right: 0.8rem !important;
 		}
+
 		#map {
 			width: 100%;
 			max-width: 960px;
 			height: 480px;
 		}
+
 		.info {
-		    padding: 6px 8px;
-		    font: 14px/16px Arial, Helvetica, sans-serif;
-		    background: white;
-		    background: rgba(255,255,255,0.8);
-		    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-		    border-radius: 5px;
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255, 255, 255, 0.8);
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+			border-radius: 5px;
 		}
+
 		.info h4 {
-   			font: 14px/16px Arial, Helvetica, sans-serif;
-		    margin: 0 0 5px;
-		    color: #777;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			margin: 0 0 5px;
+			color: #777;
 		}
+
 		.legend {
 			min-width: 120px;
 			line-height: 20px;
 			color: #555;
 		}
+
 		.legend i {
-		    width: 16px;
-		    height: 16px;
-		    float: right;
-		    margin-right: 8px;
-		    opacity: 0.7;
+			width: 16px;
+			height: 16px;
+			float: right;
+			margin-right: 8px;
+			opacity: 0.7;
 		}
+
 		#tab-container section {
-		  display: none;
+			display: none;
 		}
+
 		.section.extra {
 			padding-top: 0.1rem !important;
 		}
+
 		#tab-container section.is-active {
 			padding-top: 0.1rem;
 			padding-bottom: 0.1rem;
-		  display: block;
+			display: block;
 		}
+
 		.svg-container {
-		  display: inline-block;
-		  position: relative;
-		  width: 100%;
+			display: inline-block;
+			position: relative;
+			width: 100%;
 			padding-top: 20px;
-		  padding-bottom: 64%; /* aspect ratio */
-		  vertical-align: top;
-		  overflow: hidden;
+			padding-bottom: 64%;
+			/* aspect ratio */
+			vertical-align: top;
+			overflow: hidden;
 		}
+
 		.svg-content-responsive {
-		  display: inline-block;
-		  position: absolute;
-		  top: 0;
-		  left: 0;
+			display: inline-block;
+			position: absolute;
+			top: 0;
+			left: 0;
 			right: 0;
 		}
+
 		.tooltip {
 			display: block;
 
 		}
+
 		/* Media queries */
 		@media only screen and (max-width: 768px) {
-		  /* For mobile phones: */
-		  [class="mapcontainer"] {
-		    padding: 0 !important;
-		  }
+
+			/* For mobile phones: */
+			[class="mapcontainer"] {
+				padding: 0 !important;
+			}
+
 			.svg-container {
 				padding-bottom: 102% !important;
 			}
@@ -115,140 +136,142 @@
 
 
 </head>
+
 <body>
 
-<section class="section">
-<div class="container">
-	<div class="columns is-centered">
-		<div class="column is-half has-text-centered">
-			<h2 class="title">Kerala districtwise COVID-19 data</h2>
-		</div>
-	</div>
-
-<div class="columns is-centered">
-	<div class="column is-half">
-		<div class="tabs is-centered" id="tabs">
-		  <ul>
-		    <li class="is-active" data-tab="1"><a>Map</a></li>
-		    <li data-tab="2"><a>Graph</a></li>
-		  </ul>
-		</div>
-	</div>
-</div>
-</section>
-
-<div id="tab-container">
-<section class="section is-active"  data-content="1">
-
-<!-- section starts here -->
-<div class="columns is-centered">
-<div class="column is-half">
-
-	<div class="level is-mobile">
-		<div class="level-item">
-
-			<div class="field">
-				<label class="label is-small">
-					Date of observation
-				</label>
-				<div class="control">
-					<div class="select is-small">
-						<select name="date" id="dateSelect">
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="level-item">
-
-			<div class="field">
-				<label class="label is-small">
-					Type of observation
-				</label>
-				<div class="control">
-					<div class="select is-small">
-						<select name="type" id="featureSelect">
-							<option value="total_hospitalized">Total number of hospitalized people</option>
-							<option value="hospitalized_today">People hospitalized today</option>
-							<option value="isolation">Total people under isolation</option>
-							<option value="observation">Total people under observation</option>
-						</select>
-					</div>
+	<section class="section">
+		<div class="container">
+			<div class="columns is-centered">
+				<div class="column is-half has-text-centered">
+					<h2 class="title">Kerala districtwise COVID-19 data</h2>
 				</div>
 			</div>
 
-		</div>
-	</div>
+			<div class="columns is-centered">
+				<div class="column is-half">
+					<div class="tabs is-centered" id="tabs">
+						<ul>
+							<li class="is-active" data-tab="1"><a>Map</a></li>
+							<li data-tab="2"><a>Graph</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+	</section>
 
-</div>
-</div>
-	<div class="columns is-centered">
-		<div class="column is-half-desktop is-full-mobile mapcontainer">
-			<div id="map" class="center"></div>
-		</div>
-	</div>
-<!-- section ends here	 -->
-</section>
-<section class="section" data-content="2">
-	<div class="columns is-centered">
-		<div class="column is-half-desktop is-full-mobile has-text-centered">
-			<p class="title is-4 is-spaced">People hospitalized over time</p>
-			<p class="subtitle is-6">ആശുപത്രിയിൽ കാലക്രമേണ പ്രവേശിപ്പിച്ചവരുടെ എണ്ണം</p>
-		</div>
-	</div>
-	<div class="columns is-centered">
-		<div class="column is-half-desktop is-full-mobile">
-			<div class="level is-mobile">
-					<div class="level-item">
-						<div class="field">
-							<label class="label is-small">
-								District
-							</label>
-							<div class="control">
-								<div class="select is-small">
-									<select name="district" id="districtSelect">
-									</select>
+	<div id="tab-container">
+		<section class="section is-active" data-content="1">
+
+			<!-- section starts here -->
+			<div class="columns is-centered">
+				<div class="column is-half">
+
+					<div class="level is-mobile">
+						<div class="level-item">
+
+							<div class="field">
+								<label class="label is-small">
+									Date of observation
+								</label>
+								<div class="control">
+									<div class="select is-small">
+										<select name="date" id="dateSelect">
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="level-item">
+
+							<div class="field">
+								<label class="label is-small">
+									Type of observation
+								</label>
+								<div class="control">
+									<div class="select is-small">
+										<select name="type" id="featureSelect">
+											<option value="total_hospitalized">Total number of hospitalized people</option>
+											<option value="hospitalized_today">People hospitalized today</option>
+											<option value="isolation">Total people under isolation</option>
+											<option value="observation">Total people under observation</option>
+										</select>
+									</div>
+								</div>
+							</div>
+
+						</div>
 					</div>
 
+				</div>
 			</div>
-			<div id="graph" class="has-text-centered svg-container">
+			<div class="columns is-centered">
+				<div class="column is-half-desktop is-full-mobile mapcontainer">
+					<div id="map" class="center"></div>
+				</div>
 			</div>
-		</diiv>
-	</div>
-</section>
-</div>
+			<!-- section ends here	 -->
+		</section>
+		<section class="section" data-content="2">
+			<div class="columns is-centered">
+				<div class="column is-half-desktop is-full-mobile has-text-centered">
+					<p class="title is-4 is-spaced">People hospitalized over time</p>
+					<p class="subtitle is-6">ആശുപത്രിയിൽ കാലക്രമേണ പ്രവേശിപ്പിച്ചവരുടെ എണ്ണം</p>
+				</div>
+			</div>
+			<div class="columns is-centered">
+				<div class="column is-half-desktop is-full-mobile">
+					<div class="level is-mobile">
+						<div class="level-item">
+							<div class="field">
+								<label class="label is-small">
+									District
+								</label>
+								<div class="control">
+									<div class="select is-small">
+										<select name="district" id="districtSelect">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
 
-<section class="section extra">
-	<div class="columns is-centered">
-		<div class="column is-half">
-			<div class="content">
-				<ul>
-					<li> Call center numbers: 0471 2309250, 2309251, 2309252, 2309253, 2309254, 2309255</li>
-					<li> <i>Hospitalized</i> <strong> does not </strong> mean that they have tested positive for COVID-19.</li>
-					<li> If you are a health practitioner, volunteer with the govt. by filling this <a href='https://docs.google.com/forms/d/e/1FAIpQLScBob6yePxWwt-Lx1s-1UlpCJ-pRwbwATs5tdtqTXWypfdL1Q/viewform'> form</a>.</li>
-					<li> Watch online health training videos released by Govt. of Kerala <a href="https://www.youtube.com/c/keralahealthonlinetraining"> here</a>.</li>
-					<li> Check this project out on <a href="https://github.com/gulan28/covid19-viz/">Github</a>.</li>
-        </ul>
+					</div>
+					<div id="graph" class="has-text-centered svg-container">
+					</div>
+					</diiv>
+				</div>
+		</section>
+	</div>
+
+	<section class="section extra">
+		<div class="columns is-centered">
+			<div class="column is-half">
+				<div class="content">
+					<ul>
+						<li> Call center numbers: 0471 2309250, 2309251, 2309252, 2309253, 2309254, 2309255</li>
+						<li> <i>Hospitalized</i> <strong> does not </strong> mean that they have tested positive for COVID-19.</li>
+						<li> If you are a health practitioner, volunteer with the govt. by filling this <a href='https://docs.google.com/forms/d/e/1FAIpQLScBob6yePxWwt-Lx1s-1UlpCJ-pRwbwATs5tdtqTXWypfdL1Q/viewform'> form</a>.</li>
+						<li> Watch online health training videos released by Govt. of Kerala <a href="https://www.youtube.com/c/keralahealthonlinetraining"> here</a>.</li>
+						<li> Check this project out on <a href="https://github.com/gulan28/covid19-viz/">Github</a>.</li>
+					</ul>
+				</div>
+			</div>
 		</div>
-	</div>
-</div>
-</section>
+	</section>
 
-<footer class="footer">
-  <div class="content has-text-centered">
-    <p>
-      <strong>Data</strong> from <a href="http://dhs.kerala.gov.in/">DHS</a>, Govt. of Kerala.
-    </p>
-		<p><small>ഒരു ഗുലാൻ ഉല്പന്നം / A gulan product. <a href="https://twitter.com/gulan_28/">Twitter</a></small></p>
-  </div>
-</footer>
+	<footer class="footer">
+		<div class="content has-text-centered">
+			<p>
+				<strong>Data</strong> from <a href="http://dhs.kerala.gov.in/">DHS</a>, Govt. of Kerala.
+			</p>
+			<p><small>ഒരു ഗുലാൻ ഉല്പന്നം / A gulan product. <a href="https://twitter.com/gulan_28/">Twitter</a></small></p>
+		</div>
+	</footer>
 
-<script type="text/javascript" src="dataIndex.js"></script>
-<script type="text/javascript" src="stateGeoData.js"></script>
-<script type="text/javascript" src="dataViz.js"></script>
+	<script type="text/javascript" src="dataIndex.js"></script>
+	<script type="text/javascript" src="stateGeoData.js"></script>
+	<script type="text/javascript" src="dataViz.js"></script>
 
 </body>
+
 </html>
