@@ -18,7 +18,5 @@ var dataIndex = {
     '17-3-2020': {file: 'data_17_3_2020.csv'},
     '18-3-2020': {file: 'data_18_3_2020.csv'},
   },
-  pivot: {
-    'Total': {file: 'total.csv'},
-  },
+  pivot: {file: 'pivot.json'}
 }

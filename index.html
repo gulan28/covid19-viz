@@ -5,7 +5,7 @@
 	<title>Kerala districtwise COVID-19 data</title>
 
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
@@ -37,13 +37,8 @@
 			margin-bottom: 1px !important;
 		}
 		section {
-			padding: 3rem 0.8rem !important;
-		}
-		@media only screen and (max-width: 768px) {
-		  /* For mobile phones: */
-		  [class="mapcontainer"] {
-		    padding: 0 !important;
-		  }
+			padding-left: 0.8rem !important;
+			padding-right: 0.8rem !important;
 		}
 		#map {
 			width: 100%;
@@ -75,6 +70,47 @@
 		    margin-right: 8px;
 		    opacity: 0.7;
 		}
+		#tab-container section {
+		  display: none;
+		}
+		.section.extra {
+			padding-top: 0.1rem !important;
+		}
+		#tab-container section.is-active {
+			padding-top: 0.1rem;
+			padding-bottom: 0.1rem;
+		  display: block;
+		}
+		.svg-container {
+		  display: inline-block;
+		  position: relative;
+		  width: 100%;
+			padding-top: 20px;
+		  padding-bottom: 64%; /* aspect ratio */
+		  vertical-align: top;
+		  overflow: hidden;
+		}
+		.svg-content-responsive {
+		  display: inline-block;
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+			right: 0;
+		}
+		.tooltip {
+			display: block;
+
+		}
+		/* Media queries */
+		@media only screen and (max-width: 768px) {
+		  /* For mobile phones: */
+		  [class="mapcontainer"] {
+		    padding: 0 !important;
+		  }
+			.svg-container {
+				padding-bottom: 110% !important;
+			}
+		}
 	</style>
 
 
@@ -86,15 +122,31 @@
 	<div class="columns is-centered">
 		<div class="column is-half has-text-centered">
 			<h2 class="title">Kerala districtwise COVID-19 data</h2>
-			<hr class="lowmargin"/>
 		</div>
 	</div>
 
 <div class="columns is-centered">
+	<div class="column is-half">
+		<div class="tabs is-centered" id="tabs">
+		  <ul>
+		    <li class="is-active" data-tab="1"><a>Map</a></li>
+		    <li data-tab="2"><a>Data</a></li>
+		    <li data-tab="3"><a>Graph</a></li>
+		  </ul>
+		</div>
+	</div>
+</div>
+</section>
+
+<div id="tab-container">
+<section class="section is-active"  data-content="1">
+
+<!-- section starts here -->
+<div class="columns is-centered">
 <div class="column is-half">
 
-<div class="level is-mobile">
-<div class="level-item">
+	<div class="level is-mobile">
+		<div class="level-item">
 
 			<div class="field">
 				<label class="label is-small">
@@ -107,8 +159,8 @@
 					</div>
 				</div>
 			</div>
-</div>
-<div class="level-item">
+		</div>
+		<div class="level-item">
 
 			<div class="field">
 				<label class="label is-small">
@@ -126,19 +178,33 @@
 				</div>
 			</div>
 
-</div>
-</div>
+		</div>
+	</div>
 
 </div>
 </div>
-
-
-
 	<div class="columns is-centered">
 		<div class="column is-half-desktop is-full-mobile mapcontainer">
 			<div id="map" class="center"></div>
 		</div>
 	</div>
+<!-- section ends here	 -->
+</section>
+<section class="section" data-content="2">
+	<div class="columns is-centered">
+		<div class="column is-half-desktop is-full-mobile">
+			<div id="graph" class="has-text-centered svg-container">
+			</div>
+		</diiv>
+	</div>
+</section>
+<section class="section" data-content="3">
+	3
+</section>
+
+</div>
+
+<section class="section extra">
 	<div class="columns is-centered">
 		<div class="column is-half">
 			<div class="content">
@@ -165,274 +231,7 @@
 
 <script type="text/javascript" src="dataIndex.js"></script>
 <script type="text/javascript" src="stateGeoData.js"></script>
+<script type="text/javascript" src="dataViz.js"></script>
 
-<script type="text/javascript">
-var map = L.map('map', {attributionControl: false}).setView([10.42, 76.47], 6.5);
-var lat, lng;
-var col_range = ['#ffeda0', '#f03b20'];
-var colorfunc = function(d) { return col_range[0] }
-
-// tile base layer from mapbox to give context
-var mapbox_token = 'pk.eyJ1IjoiZ3VsYW4yOCIsImEiOiJjazd2cGp5OGgwd21kM2xwMHV6ZjA3ZXNvIn0.1OeMxwjB5QV-2DgEhStX9w';
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token='+mapbox_token, {
-	maxZoom: 18,
-	id: 'gulan28/ck7vplv1i0tl91iqlb4oz6ofy',
-	tileSize: 512,
-	zoomOffset: -1
-}).addTo(map);
-
-// helper to get latest date from array
-function getLatestDate(dateArr) {
-	var dd, mm, yyyy, spl, newd;
-	var convDateList = dateArr.map(function(d) {
-		spl = d.split('-');
-		dd = spl[0];
-		mm = parseInt(spl[1]);
-		yyyy = spl[2];
-		return new Date(yyyy, mm-1, dd);
-	})
-	var nd = new Date(Math.max.apply(null, convDateList));
-	return nd.getDate() + '-' + (nd.getMonth() + 1) + '-' + nd.getFullYear();
-}
-
-var selectedFeatureMap = {
-	'hospitalized_today': 'Number of people hospitalized today.<br/><small>ആശുപത്രിയിൽ ഇന്ന് പ്രവേശിപ്പിച്ചവർ.</small>',
-	'total_hospitalized': 'Total number of people hospitalized.<br/><small>മൊത്തം ആശുപത്രിയിൽ പ്രവേശിപ്പിച്ചവർ.</small>',
-	'isolation': 'Total number of people under isolation.<br/><small>മൊത്തം മാറ്റിപ്പാർപ്പിച്ചവർ.</small>',
-	'observation': 'Total number of people under observation.<br/><small>മൊത്തം നിരീക്ഷണത്തിൽ ഉള്ളവർ.</small>',
-};
-
-// load data
-var data = {},
-selected_date='',
-selected_feature='total_hospitalized';
-
-var queue = [],
-dates = [],
-dateSelect = d3.select('#dateSelect');
-Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
-	dates.push(key);
-	selected_date = key;
-});
-// dates in reverse order
-dates.reverse();
-selected_date = getLatestDate(dates);
-// add dates to select
-var opts = dateSelect.selectAll(null)
-  .data(dates)
-	.enter()
-	.append('option')
-	.attr('value', function(d) {
-		return d;
-	})
-	.text(function(d) {
-		return d;
-	})
-
-
-var info = L.control();
-
-info.onAdd = function(map) {
-	this._div = L.DomUtil.create('div', 'info');
-	this.update();
-	return this._div;
-};
-
-info.update = function(props) {
-	this._div.innerHTML = '<h5>' + (selected_feature.length > 0 ? selectedFeatureMap[selected_feature]: 'Select a feature to display') + '</h5>' +  (props ?
-		'<b>' + props.district + '</b><br/>' + props[selected_feature] + ' people'
-		: 'Click/touch a district.<br/><small>ഒരു ജില്ലയിൽ തൊടു.</small>');
-	};
-
-var legend = L.control({position: 'bottomleft'});
-
-legend.onAdd = function(map) {
-	this._div = L.DomUtil.create('div', 'info legend');
-	this.update();
-	return this._div;
-}
-
-legend.update = function() {
-	var rmin, rmax, intervals=[];
-	var self = this;
-	// clears innerHTML
-	self._div.innerHTML = '';
-	if (selected_date.length > 0 &&
-		selected_feature.length > 0 &&
-		Object.keys(data).length > 0) {
-  	var d = data[selected_date].filter(function(item) {
-			return item.district.toLowerCase() !== 'total'
-		});
-		rmin = d3.min(d, function(item){return parseInt(item[selected_feature])});
-		rmax = d3.max(d, function(item){return parseInt(item[selected_feature])});
-	} else {
-		rmin = 5;
-		rmax = 100;
-	}
-	for (var i=rmin; i<=rmax; i+=Math.ceil((rmax - rmin)/5)) {
-		intervals.push(i);
-	}
-	for (var i=0; i<intervals.length; i++) {
-			self._div.innerHTML +=
-					'<i style="background:' + colorfunc(intervals[i] + 1) + '"></i> ' +
-					intervals[i] + (intervals[i + 1] ? '&ndash;' + intervals[i + 1] + '<br>' : '+');
-	}
-}
-
-function highlightFeature(e) {
-	var layer = e.target;
-	resetAll();
-	layer.setStyle({
-		weight: 5,
-		color: '#666',
-		dashArray: '',
-		fillOpacity: 0.7
-	});
-
-	if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-		layer.bringToFront();
-	}
-	info.update(getDataForDistrict(layer.feature.properties.DISTRICT));
-}
-
-function onEachFeature(feature, layer) {
-	layer.on({
-		mouseover: highlightFeature,
-		mouseout: resetHighlight,
-		click: highlightFeature,
-	});
-}
-
-function getColorRangeFunc(range_min, range_max) {
-	return d3.scaleLinear()
-	.range(col_range)
-	.domain([range_min, range_max])
-	.interpolate(d3.interpolateLab);
-}
-
-function getDataForDistrict(district) {
-	var focus_item = null;
-	if (Object.keys(data).length > 0) {
-		d = data[selected_date];
-		d.forEach(function(item) {
-			if (item.district.toLowerCase() === district.toLowerCase()) {
-				focus_item = item;
-			}
-		});
-	}
-	return focus_item;
-}
-
-function setDataColorFunc() {
-	if (selected_date.length > 0 &&
-		selected_feature.length > 0 &&
-		Object.keys(data).length > 0) {
-  	var d = data[selected_date].filter(function(item) {
-			return item.district.toLowerCase() !== 'total'
-		});
-		var rmin = d3.min(d, function(item){return parseInt(item[selected_feature])});
-		var rmax = d3.max(d, function(item){return parseInt(item[selected_feature])});
-		colorfunc = getColorRangeFunc(rmin, rmax);
-	}
-}
-
-function getDataColor(district) {
-  if (selected_date.length > 0 &&
-		district &&
-		selected_feature.length > 0 &&
-		Object.keys(data).length > 0) {
-	  var focus_item = getDataForDistrict(district);
-		if (focus_item) {
-			return colorfunc(focus_item[selected_feature]);
-		}
-
-	}
-	return col_range[0];
-}
-
-function style(feature) {
-	return {
-		fillColor: getDataColor(feature.properties.DISTRICT),
-		weight: 2,
-		opacity: 1,
-		color: 'white',
-		dashArray: '3',
-		fillOpacity: 0.6
-	};
-}
-
-var geojson = L.geoJson(stateData, {
-	style: style,
-	onEachFeature: onEachFeature,
-}).addTo(map);
-info.addTo(map);
-legend.addTo(map);
-
-function resetHighlight(e) {
-	var layer = e.target;
-	geojson.resetStyle(e.target);
-	layer.setStyle({
-		weight: 2,
-		opacity: 1,
-		color: 'white',
-		dashArray: '3',
-		fillOpacity: 0.7
-	});
-	info.update();
-}
-
-function resetAll() {
-	geojson.resetStyle();
-}
-
-function updateAll() {
-	setDataColorFunc();
-	geojson.setStyle(style);
-	legend.update();
-	info.update();
-}
-
-
-// set default for featureSelect and dateSelect
-var featureSelect = d3.select('#featureSelect')
-featureSelect.property('value', selected_feature);
-dateSelect.property('value', selected_date);
-
-featureSelect.on('change', featureChangeListener);
-dateSelect.on('change', dateChangeListener);
-// listener for feature change
-function featureChangeListener() {
-	if (this.selectedOptions.length > 0) {
-		var selOpt = this.selectedOptions[0].value;
-		selected_feature = selOpt;
-		updateAll();
-	}
-}
-// listener for date change
-
-function dateChangeListener() {
-	if (this.selectedOptions.length > 0) {
-		var date = this.selectedOptions[0].value;
-		fetchDataForDate(date);
-	}
-}
-
-function fetchDataForDate(date) {
-	if (Object.keys(data).includes(date)) {
-		selected_date = date;
-		updateAll();
-	} else {
-		var filename = './data/' + dataIndex.daily_bulletin[date].file;
-		d3.csv(filename).then(function(dat){
-			data[date] = dat;
-			selected_date = date;
-			updateAll();
-		});
-	}
-}
-
-// fetch data for initial date
-fetchDataForDate(selected_date);
-</script>
 </body>
 </html>
