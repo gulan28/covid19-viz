@@ -9,21 +9,35 @@ var margin = {
   width,
   height = 400 - margin.top - margin.bottom;
 
-var svg = d3.select("#graph")
-  .append("svg")
-  .attr("preserveAspectRatio", "xMinYMin meet")
-  .attr("viewBox", "0 0 600 400")
-  .attr("height", height + margin.top + margin.bottom)
-  .classed("svg-content-responsive", true)
-  .append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var selectedFeatureMap = {
+  'hospitalized_today': 'Number of people hospitalized today.<br/><small>ആശുപത്രിയിൽ ഇന്ന് പ്രവേശിപ്പിച്ചവർ.</small>',
+  'total_hospitalized': 'Total number of people hospitalized.<br/><small>മൊത്തം ആശുപത്രിയിൽ പ്രവേശിപ്പിച്ചവർ.</small>',
+  'isolation': 'Total number of people under isolation.<br/><small>മൊത്തം മാറ്റിപ്പാർപ്പിച്ചവർ.</small>',
+  'observation': 'Total number of people under observation.<br/><small>മൊത്തം നിരീക്ഷണത്തിൽ ഉള്ളവർ.</small>',
+};
+
+var graphFeatureMap = {
+  'hospitalized_today': 'People hospitalized today',
+  'total_hospitalized': 'Total people hospitalized',
+  'isolation': 'People under isolation',
+  'observation': 'People under observation',
+}
+
+var svg = d3.select('#graph')
+  .append('svg')
+  .attr('preserveAspectRatio', 'xMinYMin meet')
+  .attr('viewBox', '0 0 600 400')
+  .attr('height', height + margin.top + margin.bottom)
+  .classed('svg-content-responsive', true)
+  .append('g')
+  .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
   var parsedData = {};
   Object.keys(pivotData).forEach(function(districtName) {
     var districtData = pivotData[districtName];
     var parsedDistrictData = districtData.map(function(item) {
-      item.date = d3.timeParse("%Y-%m-%d")(item.date);
+      item.date = d3.timeParse('%Y-%m-%d')(item.date);
       item.observation = parseInt(item.observation);
       item.isolation = parseInt(item.isolation);
       item.total_hospitalized = parseInt(item.total_hospitalized);
@@ -32,114 +46,150 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     });
     parsedData[districtName] = parsedDistrictData;
   });
-  console.log(parsedData['Total'])
 
-  var totaldata = parsedData['Total'].sort(function(a,b) { return d3.ascending(a.date, b.date); });
-  var graph_feature = 'total_hospitalized'
-  // take care of gmin == gmax issues
-  var graph_min = d3.min(totaldata, function(d) { return d[graph_feature]; }),
-  graph_max = d3.max(totaldata, function(d) { return d[graph_feature]; });
-  if (graph_max <= 0) {
-    graph_max = 50;
-  }
-  if (graph_max === graph_min) {
-    graph_min = 0;
-  }
+  var districtList = Object.keys(parsedData);
+  var graph_selected_district = 'Total',
+    totaldata,
+    graph_selected_feature = 'total_hospitalized';
 
-  // from d3 tutorial
-  // it is a date format
-  var xScale = d3.scaleTime()
-    .domain(d3.extent(totaldata, function(d) {
-      return d.date;
-    }))
-    // .range([0, width]);
-  var xAxis = d3.axisBottom().scale(xScale);
-  var xAxisElem = svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  //  .call(d3.axisBottom(xScale));
+  // create a static tooltip
+  var Tooltip = d3.select('#graph')
+    .append('div')
+    .attr('class', 'tooltip')
+    .style('display', 'inline')
+    .style('right', '60px')
+    .style('bottom', '110px')
+    .style('position', 'absolute')
+    .style('background-color', 'white')
+    .style('z-index', '1000')
+    .style('border', 'solid')
+    .style('border-width', '2px')
+    .style('border-radius', '5px')
+    .style('padding', '8px')
+    .style('margin', '5px')
+    .style('font-size', '12px')
+    .style('text-align', 'left')
+    .html('Click on a data point');
 
-  // Y scaling function TODO: check why curve isn't rendered properly
-  var yScale = d3.scaleLinear()
-    .domain([graph_min, graph_max])
-    .range([height, 0]);
-  var yAxis = svg.append("g")
-  .call(d3.axisLeft(yScale));
-
-  // create a tooltip
-  var Tooltip = d3.select("#graph")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
-    .style("padding", "5px")
-
-  // Three function that change the tooltip when user hover / move / leave a cell
-  var mouseover = function(d) {
+  var tooltipClick = function(d) {
+    var date = d['date'];
+    var dateStr = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
     Tooltip
-      .style("opacity", 1)
-  }
-  var mousemove = function(d) {
-    Tooltip
-      .html("Exact value: " + d[graph_feature])
-      .style("left", (d3.mouse(this)[0] + 70) + "px")
-      .style("top", (d3.mouse(this)[1]) + "px")
-  }
-  var mouseleave = function(d) {
-    Tooltip
-      .style("opacity", 0)
+      .html(
+        '<b>' + dateStr + '</b><br/>' +
+        graphFeatureMap['total_hospitalized'] + ': <b>' + d['total_hospitalized'] + '</b><br/>' +
+        graphFeatureMap['hospitalized_today'] + ': <b>' + d['hospitalized_today'] + '</b><br/>' +
+        graphFeatureMap['isolation'] + ': <b>' + d['isolation'] + '</b><br/>' +
+        graphFeatureMap['observation'] + ': <b>' + d['observation'] + '</b><br/>'
+      );
   }
 
   function drawGraph() {
+    totaldata = parsedData[graph_selected_district].sort(function(a, b) {
+      return d3.ascending(a.date, b.date);
+    });
     width = Math.min(parseInt(d3.select('body').style('width'), 10), 600) - margin.left - margin.right - 10;
-    console.log("width: ", width);
-  	// set the new width
-  	svg.attr("width", width + margin.left + margin.right);
-    xScale.range([0, width]);
+    // console.log('width: ', width);
+    // take care of gmin == gmax issues
+    var graph_min = d3.min(totaldata, function(d) {
+        return d[graph_selected_feature];
+      }),
+      graph_max = d3.max(totaldata, function(d) {
+        return d[graph_selected_feature];
+      });
+    if (graph_max <= 0) {
+      graph_max = 50;
+    }
+    if (graph_max === graph_min) {
+      graph_min = 0;
+    }
+
+    // #TODO move them outside and figure out d3's enter update exit loop
+    var xScale = d3.scaleTime()
+      .domain(d3.extent(totaldata, function(d) {
+        return d.date;
+      }))
+      .range([0, width]);
+
+    var xAxis = svg.append('g')
+      .attr('transform', 'translate(0,' + height + ')')
+      .call(d3.axisBottom(xScale));
+
+    // Y scaling function
+    var yScale = d3.scaleLinear()
+      .domain([graph_min, graph_max])
+      .range([height, 0]);
+    var yAxis = svg.append('g')
+      .call(d3.axisLeft(yScale));
+    // set the width
+    svg.attr('width', width + margin.left + margin.right);
     // resized scale
-  	xAxis.scale(xScale);
-  	xAxisElem.call(xAxis);
-    // Add the line
-    svg.append("path")
+    // set tooltip position
+    if (width < 400) {
+      Tooltip
+        .style('right', '10px')
+        .style('bottom', '50px')
+        .style('font-size', '9px')
+    }
+    // Add the curve
+    svg.append('path')
       .datum(totaldata)
-      .attr("fill", "none")
-      .attr("stroke", "black")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
+      .attr('fill', 'none')
+      .attr('stroke', 'black')
+      .attr('stroke-width', 1.5)
+      .attr('d', d3.line()
         .curve(d3.curveCatmullRom)
         .x(function(d) {
           return xScale(d.date)
         })
         .y(function(d) {
-          return yScale(d[graph_feature])
+          return yScale(d[graph_selected_feature])
         })
       )
 
-      // Add the points
-      svg
-        .append("g")
-        .selectAll("dot")
-        .data(totaldata)
-        .enter()
-        .append("circle")
-        .attr("class", "myCircle")
-        .attr("cx", function(d) {
-          return xScale(d.date)
-        })
-        .attr("cy", function(d) {
-          return yScale(d[graph_feature])
-        })
-        .attr("r", 8)
-        .attr("stroke", "#69b3a2")
-        .attr("stroke-width", 3)
-        .attr("fill", "white")
-        .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave)
+    // Add the points
+    svg
+      .append('g')
+      .selectAll('dot')
+      .data(totaldata)
+      .enter()
+      .append('circle')
+      .attr('class', 'myCircle')
+      .attr('cx', function(d) {
+        return xScale(d.date)
+      })
+      .attr('cy', function(d) {
+        return yScale(d[graph_selected_feature])
+      })
+      .attr('r', 8)
+      .attr('stroke', '#000')
+      .attr('stroke-width', 3)
+      .attr('fill', '#feb24c')
+      .on('click', tooltipClick)
   }
-drawGraph();
+  var districtSelect = d3.select('#districtSelect');
+  var districtOpts = districtSelect.selectAll(null)
+    .data(districtList)
+    .enter()
+    .append('option')
+    .attr('value', function(d) {
+      return d;
+    })
+    .text(function(d) {
+      return d;
+    });
+  districtSelect.property('value', graph_selected_district);
+  districtSelect.on('change', districtChangeListener);
+
+  function districtChangeListener() {
+    if (this.selectedOptions.length > 0) {
+      var selOpt = this.selectedOptions[0].value;
+      graph_selected_district = selOpt;
+    }
+    svg.selectAll('*').remove();
+    drawGraph();
+  }
+  drawGraph();
 });
 
 var map = L.map('map', {
@@ -174,12 +224,6 @@ function getLatestDate(dateArr) {
   return nd.getDate() + '-' + (nd.getMonth() + 1) + '-' + nd.getFullYear();
 }
 
-var selectedFeatureMap = {
-  'hospitalized_today': 'Number of people hospitalized today.<br/><small>ആശുപത്രിയിൽ ഇന്ന് പ്രവേശിപ്പിച്ചവർ.</small>',
-  'total_hospitalized': 'Total number of people hospitalized.<br/><small>മൊത്തം ആശുപത്രിയിൽ പ്രവേശിപ്പിച്ചവർ.</small>',
-  'isolation': 'Total number of people under isolation.<br/><small>മൊത്തം മാറ്റിപ്പാർപ്പിച്ചവർ.</small>',
-  'observation': 'Total number of people under observation.<br/><small>മൊത്തം നിരീക്ഷണത്തിൽ ഉള്ളവർ.</small>',
-};
 
 // load data
 var data = {},
@@ -423,7 +467,7 @@ function fetchDataForDate(date) {
 fetchDataForDate(selected_date);
 
 // tab switching code
-var tabs = d3.selectAll("#tabs li");
+var tabs = d3.selectAll('#tabs li');
 tabs.on('click', function() {
   var self = d3.select(this);
   var tabNum = self.attr('data-tab');
