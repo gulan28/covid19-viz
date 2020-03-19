@@ -1,5 +1,7 @@
+from collections import defaultdict
 import csv
 import glob
+import json
 import os
 import re
 
@@ -42,17 +44,19 @@ def csv_writer(filepath, data):
 
 
 def create_total_pivot():
-    total_list = []
-    print("Creating total pivot file")
+    pivot_dict = defaultdict(list)
+    print("Creating pivot files")
     data = process_csv()
     for fname in data.keys():
         date = get_date(fname)
         for i in data[fname]:
-            if i['district'].lower() == 'total':
-                del i['district']
-                i['date'] = date
-                total_list.append(i)
-    csv_writer('./data/total.csv', total_list)
+            district = i['district']
+            del i['district']
+            i['date'] = date
+            pivot_dict[district].append(i)
+    with open('./data/pivot.json', 'w') as jsonfile:
+        json.dump(pivot_dict, jsonfile)
+    csv_writer('./data/total.csv', pivot_dict['Total'])
     print("Created")
 
 
