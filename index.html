@@ -82,12 +82,28 @@
 			opacity: 0.7;
 		}
 
+		#infobar {
+			border-bottom-width: 1px;
+			padding-bottom: 1rem;
+		}
+
+		.infobar-hr {
+			margin-top: 0.5rem;
+			width: 80%;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
 		#tab-container section {
 			display: none;
 		}
 
+		.section.top {
+			padding-bottom: 1rem !important;
+		}
+
 		.section.extra {
-			padding-top: 0.1rem !important;
+			padding-top: 1rem !important;
 		}
 
 		#tab-container section.is-active {
@@ -114,11 +130,11 @@
 			left: 0;
 			right: 0;
 		}
-
 		.tooltip {
 			display: block;
 
 		}
+
 
 		/* Media queries */
 		@media only screen and (max-width: 768px) {
@@ -139,7 +155,7 @@
 
 <body>
 
-	<section class="section">
+	<section class="section top">
 		<div class="container">
 			<div class="columns is-centered">
 				<div class="column is-half has-text-centered">
@@ -165,7 +181,8 @@
 			<!-- section starts here -->
 			<div class="columns is-centered">
 				<div class="column is-half">
-
+					<div id="infobar" class="has-text-centered"></div>
+					<hr class="infobar-hr"/>
 					<div class="level is-mobile">
 						<div class="level-item">
 
@@ -190,8 +207,9 @@
 								<div class="control">
 									<div class="select is-small">
 										<select name="type" id="featureSelect">
-											<option value="total_hospitalized">Total number of hospitalized people</option>
-											<option value="hospitalized_today">People hospitalized today</option>
+											<option value="active">Total number of people who have COVID-19</option>
+											<option value="total_hospitalized">Number of symptomatic hospitalized people</option>
+											<option value="hospitalized_today">Symptomatic people hospitalized today</option>
 											<option value="isolation">Total people under isolation</option>
 											<option value="observation">Total people under observation</option>
 										</select>
@@ -235,6 +253,25 @@
 							</div>
 						</div>
 
+						<div class="level-item">
+							<div class="field">
+								<label class="label is-small">
+									Type of observation
+								</label>
+								<div class="control">
+									<div class="select is-small">
+										<select name="type" id="graphFeatureSelect">
+											<option value="active">Total number of people who have COVID-19</option>
+											<option value="total_hospitalized">Number of symptomatic hospitalized people</option>
+											<option value="hospitalized_today">Symptomatic people hospitalized today</option>
+											<option value="isolation">Total people under isolation</option>
+											<option value="observation">Total people under observation</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+
 					</div>
 					<div id="graph" class="has-text-centered svg-container">
 					</div>
@@ -247,9 +284,14 @@
 		<div class="columns is-centered">
 			<div class="column is-half">
 				<div class="content">
+					<h5 class="title is-5"> Disclaimer </h5>
+  					<ul>
+							<li> Active COVID-19 state counts before <i>14/03/2020</i> aren't accurate as govt. bulletin does not have accurate counts</li>
+	  					<li> <i>Hospitalized</i> <strong> does not </strong> mean that they have tested positive for COVID-19.</li>
+		  			</ul>
+					<h5 class="title is-5">Helpful information</h5>
 					<ul>
 						<li> Call center numbers: 0471 2309250, 2309251, 2309252, 2309253, 2309254, 2309255</li>
-						<li> <i>Hospitalized</i> <strong> does not </strong> mean that they have tested positive for COVID-19.</li>
 						<li> If you are a health practitioner, volunteer with the govt. by filling this <a href='https://docs.google.com/forms/d/e/1FAIpQLScBob6yePxWwt-Lx1s-1UlpCJ-pRwbwATs5tdtqTXWypfdL1Q/viewform'> form</a>.</li>
 						<li> Watch online health training videos released by Govt. of Kerala <a href="https://www.youtube.com/c/keralahealthonlinetraining"> here</a>.</li>
 						<li> Check this project out on <a href="https://github.com/gulan28/covid19-viz/">Github</a>.</li>

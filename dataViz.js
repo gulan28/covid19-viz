@@ -2,21 +2,23 @@
 // TODO set this according to deviceHeight and deviceWidth
 var margin = {
     top: 10,
-    right: 20,
+    right: 5,
     bottom: 30,
-    left: 20
+    left: 30
   },
   width,
   height = 400 - margin.top - margin.bottom;
 
 var selectedFeatureMap = {
   'hospitalized_today': 'Number of people hospitalized today.<br/><small>ആശുപത്രിയിൽ ഇന്ന് പ്രവേശിപ്പിച്ചവർ.</small>',
-  'total_hospitalized': 'Total number of people hospitalized.<br/><small>മൊത്തം ആശുപത്രിയിൽ പ്രവേശിപ്പിച്ചവർ.</small>',
+  'total_hospitalized': 'Total number of symptomatic people hospitalized.<br/><small>മൊത്തം ആശുപത്രിയിൽ പ്രവേശിപ്പിച്ചവർ.</small>',
   'isolation': 'Total number of people under isolation.<br/><small>മൊത്തം മാറ്റിപ്പാർപ്പിച്ചവർ.</small>',
   'observation': 'Total number of people under observation.<br/><small>മൊത്തം നിരീക്ഷണത്തിൽ ഉള്ളവർ.</small>',
+  'active': 'Total number of people who have COVID-19.<br/><small>COVID-19 ബാധിച്ചു ശുശ്രുഷയിൽ ഉള്ളവർ.</small>',
 };
 
 var graphFeatureMap = {
+  'active': 'People with COVID-19',
   'hospitalized_today': 'People hospitalized today',
   'total_hospitalized': 'Total people hospitalized',
   'isolation': 'People under isolation',
@@ -42,6 +44,7 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
       item.isolation = parseInt(item.isolation);
       item.total_hospitalized = parseInt(item.total_hospitalized);
       item.hospitalized_today = parseInt(item.hospitalized_today);
+      item.active = parseInt(item.active);
       return item;
     });
     parsedData[districtName] = parsedDistrictData;
@@ -50,7 +53,7 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
   var districtList = Object.keys(parsedData);
   var graph_selected_district = 'Total',
     totaldata,
-    graph_selected_feature = 'total_hospitalized';
+    graph_selected_feature = 'active';
 
   // create a static tooltip
   var Tooltip = d3.select('#graph')
@@ -61,7 +64,7 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     .style('bottom', '110px')
     .style('position', 'absolute')
     .style('background-color', 'white')
-    .style('z-index', '1000')
+    .style('z-index', '-1000')
     .style('border', 'solid')
     .style('border-width', '2px')
     .style('border-radius', '5px')
@@ -77,10 +80,7 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     Tooltip
       .html(
         '<b>' + dateStr + '</b><br/>' +
-        graphFeatureMap['total_hospitalized'] + ': <b>' + d['total_hospitalized'] + '</b><br/>' +
-        graphFeatureMap['hospitalized_today'] + ': <b>' + d['hospitalized_today'] + '</b><br/>' +
-        graphFeatureMap['isolation'] + ': <b>' + d['isolation'] + '</b><br/>' +
-        graphFeatureMap['observation'] + ': <b>' + d['observation'] + '</b><br/>'
+        graphFeatureMap[graph_selected_feature] + ': <b>' + d[graph_selected_feature] + '</b><br/>'
       );
   }
 
@@ -89,7 +89,6 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
       return d3.ascending(a.date, b.date);
     });
     width = Math.min(parseInt(d3.select('body').style('width'), 10), 600) - margin.left - margin.right - 10;
-    // console.log('width: ', width);
     // take care of gmin == gmax issues
     var graph_min = d3.min(totaldata, function(d) {
         return d[graph_selected_feature];
@@ -180,15 +179,31 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     });
   districtSelect.property('value', graph_selected_district);
   districtSelect.on('change', districtChangeListener);
+  var graphFeatureSelect = d3.select('#graphFeatureSelect');
+  graphFeatureSelect.property('value', graph_selected_feature);
+  graphFeatureSelect.on('change', graphFeatureChangeListener);
+
+  function updateGraph() {
+    svg.selectAll('*').remove();
+    drawGraph();
+  }
 
   function districtChangeListener() {
     if (this.selectedOptions.length > 0) {
       var selOpt = this.selectedOptions[0].value;
       graph_selected_district = selOpt;
     }
-    svg.selectAll('*').remove();
-    drawGraph();
+    updateGraph();
   }
+
+  function graphFeatureChangeListener() {
+    if (this.selectedOptions.length > 0) {
+      var selOpt = this.selectedOptions[0].value;
+      graph_selected_feature = selOpt;
+    }
+    updateGraph();
+  }
+
   drawGraph();
 });
 
@@ -228,7 +243,7 @@ function getLatestDate(dateArr) {
 // load data
 var data = {},
   selected_date = '',
-  selected_feature = 'total_hospitalized';
+  selected_feature = 'active';
 
 var dates = [],
   dateSelect = d3.select('#dateSelect');
@@ -304,6 +319,15 @@ legend.update = function() {
     self._div.innerHTML +=
       '<i style="background:' + colorfunc(intervals[i] + 1) + '"></i> ' +
       intervals[i] + (intervals[i + 1] ? '&ndash;' + intervals[i + 1] + '<br>' : '+');
+  }
+}
+
+function infobarUpdate() {
+  var infobar = d3.select('#infobar');
+  if (selected_date !== undefined) {
+    infobar.html('<p class="subtitle is-5">People with COVID-19 in Kerala: <b>' +
+      dataIndex.daily_bulletin[selected_date]['total_active'] +
+      '</b></p>')
   }
 }
 
@@ -422,6 +446,7 @@ function updateAll() {
   geojson.setStyle(style);
   legend.update();
   info.update();
+  infobarUpdate();
 }
 
 
@@ -465,6 +490,7 @@ function fetchDataForDate(date) {
 
 // fetch data for initial date
 fetchDataForDate(selected_date);
+infobarUpdate();
 
 // tab switching code
 var tabs = d3.selectAll('#tabs li');
