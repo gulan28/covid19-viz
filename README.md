@@ -12,5 +12,7 @@ Cleaned data is in the `data` folder.
 
 ### Todo
 * Wash your hands :)
-* Show total values + infected counts (this is in dataIndex.js)
+* use `/data/pivot.json` to display the data instead of requesting individual csv's
+* Add and show total values and total infected counts.
+* Cleaner code / use C3 for displaying charts. (C3 had a bug where chart sizes weren't correct)
 * No leading zeroes in dates because of how dates are parsed
