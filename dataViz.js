@@ -60,8 +60,8 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     .append('div')
     .attr('class', 'tooltip')
     .style('display', 'inline')
-    .style('right', '60px')
-    .style('bottom', '110px')
+    .style('right', '80px')
+    .style('bottom', '10px')
     .style('position', 'absolute')
     .style('background-color', 'white')
     .style('z-index', '-1000')
@@ -126,8 +126,8 @@ d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     // set tooltip position
     if (width < 400) {
       Tooltip
-        .style('right', '10px')
-        .style('bottom', '50px')
+        .style('right', '40px')
+        .style('bottom', '10px')
         .style('font-size', '9px')
     }
     // Add the curve
