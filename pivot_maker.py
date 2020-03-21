@@ -1,6 +1,7 @@
 from collections import defaultdict
 import csv
 import glob
+from itertools import chain
 import json
 import os
 import re
@@ -43,7 +44,7 @@ def csv_writer(filepath, data):
         w.writerows(data)
 
 
-def create_total_pivot():
+def create_districtwise_pivot():
     pivot_dict = defaultdict(list)
     print("Creating pivot files")
     data = process_csv()
@@ -51,15 +52,18 @@ def create_total_pivot():
         date = get_date(fname)
         for i in data[fname]:
             district = i['district']
-            del i['district']
             i['date'] = date
             pivot_dict[district].append(i)
+    # create timeseries json
     with open('./data/pivot.json', 'w') as jsonfile:
         json.dump(pivot_dict, jsonfile)
-    csv_writer('./data/total.csv', pivot_dict['Total'])
-    print("Created")
+    print("Created timeseries json")
+    # create timeseries csv
+    pivot_list = list(chain.from_iterable(pivot_dict.values()))
+    csv_writer('./data/pivot.csv', pivot_list)
+    print("Created timeseries csv")
 
 
 if __name__ == '__main__':
-    create_total_pivot()
+    create_districtwise_pivot()
                 
