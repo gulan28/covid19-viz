@@ -24,6 +24,7 @@ var dataIndex = {
     '22-3-2020': {file: 'data_22_3_2020.csv', sample_sent: 4035, sample_negative: 2744, total_active: 67, total_positive: 64},
     '23-3-2020': {file: 'data_23_3_2020.csv', sample_sent: 4291, sample_negative: 2987, total_active: 95, total_positive: 91},
     '24-3-2020': {file: 'data_24_3_2020.csv', sample_sent: 4516, sample_negative: 3331, total_active: 109, total_positive: 105},
+    '25-3-2020': {file: 'data_25_3_2020.csv', sample_sent: 4902, sample_negative: 3465, total_active: 118, total_positive: 112},
   },
   pivot: {file: 'pivot.json'}
 }
