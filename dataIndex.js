@@ -21,11 +21,11 @@ var dataIndex = {
     '19-3-2020': {file: 'data_19_3_2020.csv', sample_sent: 2921, sample_negative: 2342, total_active: 25, total_positive: 28},
     '20-3-2020': {file: 'data_20_3_2020.csv', sample_sent: 3436, sample_negative: 2393, total_active: 37, total_positive: 40},
     '21-3-2020': {file: 'data_21_3_2020.csv', sample_sent: 3716, sample_negative: 2566, total_active: 49, total_positive: 52},
-    '22-3-2020': {file: 'data_22_3_2020.csv', sample_sent: 4035, sample_negative: 2744, total_active: 67, total_positive: 64},
-    '23-3-2020': {file: 'data_23_3_2020.csv', sample_sent: 4291, sample_negative: 2987, total_active: 95, total_positive: 91},
-    '24-3-2020': {file: 'data_24_3_2020.csv', sample_sent: 4516, sample_negative: 3331, total_active: 109, total_positive: 105},
-    '25-3-2020': {file: 'data_25_3_2020.csv', sample_sent: 4902, sample_negative: 3465, total_active: 118, total_positive: 112},
-    '26-3-2020': {file: 'data_26_3_2020.csv', sample_sent: 5342, sample_negative: 3768, total_active: 137, total_positive: 126},
+    '22-3-2020': {file: 'data_22_3_2020.csv', sample_sent: 4035, sample_negative: 2744, total_active: 64, total_positive: 67},
+    '23-3-2020': {file: 'data_23_3_2020.csv', sample_sent: 4291, sample_negative: 2987, total_active: 91, total_positive: 95},
+    '24-3-2020': {file: 'data_24_3_2020.csv', sample_sent: 4516, sample_negative: 3331, total_active: 105, total_positive: 109},
+    '25-3-2020': {file: 'data_25_3_2020.csv', sample_sent: 4902, sample_negative: 3465, total_active: 112, total_positive: 118},
+    '26-3-2020': {file: 'data_26_3_2020.csv', sample_sent: 5342, sample_negative: 3768, total_active: 126, total_positive: 137},
   },
   pivot: {file: 'pivot.json'}
 }
