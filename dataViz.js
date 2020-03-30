@@ -308,8 +308,8 @@ legend.update = function() {
     rmax = d3.max(d, function(item) {
       return parseInt(item[selected_feature])
     });
-  } else {
-    rmin = 5;
+  }
+  if (rmax === 0) {
     rmax = 100;
   }
   for (var i = rmin; i <= rmax; i += Math.ceil((rmax - rmin) / 5)) {
