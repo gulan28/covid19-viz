@@ -26,8 +26,15 @@ district_map = {
 }
 
 CSV_HEADER = ['district', 'observation', 'total_hospitalized', 'isolation', 'hospitalized_today']
-REQ_URL = "https://dashboard.kerala.gov.in/ajax_quar_dte_list.php"
-DATE_REQ_STRING = 'rdate'
+REQ_URL = "https://dashboard.kerala.gov.in/quarantine-view-public.php"
+DATE_REQ_STRING = 'rep_date'
+HEADERS = {
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-User': '?1',
+    'Referer': 'https://dashboard.kerala.gov.in/quarantine-view-public.php'
+}
 
 def csv_writer(filepath, data):
     with open(filepath, 'w') as f:
@@ -39,15 +46,16 @@ def csv_writer(filepath, data):
 def get_data_for_date(date):
     # expects a date object
     date_str = date.strftime("%d/%m/%Y")
-    payload = {DATE_REQ_STRING: date_str}
+    payload = {DATE_REQ_STRING: date_str, 'vw': 'View'}
     csv_data = []
     try:
-        response = requests.post(REQ_URL, data=payload)
+        response = requests.post(REQ_URL, data=payload, headers=HEADERS)
     except requests.exceptions.RequestException  as e:
         print(e)
     else:
         soup = BeautifulSoup(response.content, "html.parser")
-        for row in soup.find_all('tr'):
+        table = soup.find_all('table')[0]
+        for row in table.find_all('tr')[1:]:
             cols = [i.text for i in row.find_all('td')]
             district = cols[0]
             data_dict = dict(zip(CSV_HEADER, cols))
