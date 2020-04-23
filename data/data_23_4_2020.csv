@@ -1,0 +1,16 @@
+district,observation,total_hospitalized,hospitalized_today,isolation,active
+Kasaragod,3126,56,2,3070,19
+Kannur,2592,110,20,2482,59
+Wayanad,1579,7,3,1572,1
+Kozhikode,2770,36,15,2734,15
+Malappuram,2465,70,42,2395,5
+Palakkad,3332,51,21,3281,6
+Thrissur,814,11,7,803,0
+Ernakulam,152,13,5,139,2
+Idukki,1336,4,1,1332,4
+Kottayam,157,1,1,156,3
+Alappuzha,1858,3,1,1855,0
+Pathanamthitta,697,7,1,690,6
+Kollam,1509,24,6,1485,7
+Thiruvananthapuram,1489,44,23,1445,2
+Total,23876,437,148,23439,129
