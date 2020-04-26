@@ -27,8 +27,8 @@ district_map = {
 
 CSV_HEADER = ['district', 'observation', 'total_hospitalized', 'isolation', 'hospitalized_today']
 INIT_URL = 'https://dashboard.kerala.gov.in'
-REQ_URL = 'https://dashboard.kerala.gov.in/quarantine-view-public.php'
-DATE_REQ_STRING = 'rep_date'
+REQ_URL = 'https://dashboard.kerala.gov.in/quarantined-datewise.php'
+DATE_REQ_STRING = 'rep_date3'
 HEADERS = {
     'Sec-Fetch-Dest': 'document',
     'Sec-Fetch-Site': 'same-origin',
@@ -36,7 +36,7 @@ HEADERS = {
     'Sec-Fetch-User': '?1',
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36',
     'Origin': 'https://dashboard.kerala.gov.in',
-    'Referer': 'https://dashboard.kerala.gov.in/quarantine-view-public.php'
+    'Referer': 'https://dashboard.kerala.gov.in/quarantined-datewise.php'
 }
 
 def csv_writer(filepath, data):
@@ -49,7 +49,7 @@ def csv_writer(filepath, data):
 def get_data_for_date(date):
     # expects a date object
     date_str = date.strftime('%d/%m/%Y')
-    payload = {DATE_REQ_STRING: date_str, 'vw': 'View'}
+    payload = {DATE_REQ_STRING: date_str, 'lw': 'View'}
     csv_data = []
     try:
         sess = requests.Session()
