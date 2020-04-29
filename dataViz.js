@@ -1,13 +1,3 @@
-// set the dimensions and margins of the graph
-// TODO set this according to deviceHeight and deviceWidth
-var margin = {
-    top: 10,
-    right: 5,
-    bottom: 30,
-    left: 30
-  },
-  width,
-  height = 400 - margin.top - margin.bottom;
 
 var selectedFeatureMap = {
   'hospitalized_today': 'Number of people hospitalized today.<br/><small>ആശുപത്രിയിൽ ഇന്ന് പ്രവേശിപ്പിച്ചവർ.</small>',
@@ -25,187 +15,142 @@ var graphFeatureMap = {
   'observation': 'People under observation',
 }
 
-var svg = d3.select('#graph')
-  .append('svg')
-  .attr('preserveAspectRatio', 'xMinYMin meet')
-  .attr('viewBox', '0 0 600 400')
-  .attr('height', height + margin.top + margin.bottom)
-  .classed('svg-content-responsive', true)
-  .append('g')
-  .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+var colorList = [
+  '#e6739f',
+  '#efb1ff',
+  '#c06c84',
+  '#ffac41',
+  '#0f4c81',
+  '#18b0b0',
+  '#eca0b6',
+  '#844685',
+  '#649d66',
+  '#40bad5',
+  '#6886c5',
+  '#9dc6a7',
+  '#e8f044',
+  '#a7e9af',
+  '#d63447',
+];
 
-d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
-  var parsedData = {};
-  Object.keys(pivotData).forEach(function(districtName) {
-    var districtData = pivotData[districtName];
-    var parsedDistrictData = districtData.map(function(item) {
-      item.date = d3.timeParse('%Y-%m-%d')(item.date);
-      item.observation = parseInt(item.observation);
-      item.isolation = parseInt(item.isolation);
-      item.total_hospitalized = parseInt(item.total_hospitalized);
-      item.hospitalized_today = parseInt(item.hospitalized_today);
-      item.active = parseInt(item.active);
-      return item;
-    });
-    parsedData[districtName] = parsedDistrictData;
-  });
+// load data
+var data = {},
+  selected_date = '',
+  selected_feature = 'active';
 
-  var districtList = Object.keys(parsedData);
-  var graph_selected_district = 'Total',
-    totaldata,
-    graph_selected_feature = 'active';
-
-  // create a static tooltip
-  var Tooltip = d3.select('#graph')
-    .append('div')
-    .attr('class', 'tooltip')
-    .style('display', 'inline')
-    .style('left', '80px')
-    .style('top', '10px')
-    .style('position', 'absolute')
-    .style('background-color', 'white')
-    .style('z-index', '-1000')
-    .style('border', 'solid')
-    .style('border-width', '2px')
-    .style('border-radius', '5px')
-    .style('padding', '8px')
-    .style('margin', '5px')
-    .style('font-size', '12px')
-    .style('text-align', 'left')
-    .html('Click on a data point');
-
-  var tooltipClick = function(d) {
-    var date = d['date'];
-    var dateStr = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
-    Tooltip
-      .html(
-        '<b>' + dateStr + '</b><br/>' +
-        graphFeatureMap[graph_selected_feature] + ': <b>' + d[graph_selected_feature] + '</b><br/>'
-      );
-  }
-
-  function drawGraph() {
-    totaldata = parsedData[graph_selected_district].sort(function(a, b) {
-      return d3.ascending(a.date, b.date);
-    });
-    width = Math.min(parseInt(d3.select('body').style('width'), 10), 600) - margin.left - margin.right - 10;
-    // take care of gmin == gmax issues
-    var graph_min = d3.min(totaldata, function(d) {
-        return d[graph_selected_feature];
-      }),
-      graph_max = d3.max(totaldata, function(d) {
-        return d[graph_selected_feature];
-      });
-    if (graph_max <= 0) {
-      graph_max = 50;
-    }
-    if (graph_max === graph_min) {
-      graph_min = 0;
-    }
-
-    // #TODO move them outside and figure out d3's enter update exit loop
-    var xScale = d3.scaleTime()
-      .domain(d3.extent(totaldata, function(d) {
-        return d.date;
-      }))
-      .range([0, width]);
-
-    var xAxis = svg.append('g')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(xScale));
-
-    // Y scaling function
-    var yScale = d3.scaleLinear()
-      .domain([graph_min, graph_max])
-      .range([height, 0]);
-    var yAxis = svg.append('g')
-      .call(d3.axisLeft(yScale));
-    // set the width
-    svg.attr('width', width + margin.left + margin.right);
-    // resized scale
-    // set tooltip position
-    if (width < 400) {
-      Tooltip
-        .style('left', '40px')
-        .style('top', '10px')
-        .style('font-size', '9px')
-    }
-    // Add the curve
-    svg.append('path')
-      .datum(totaldata)
-      .attr('fill', 'none')
-      .attr('stroke', 'black')
-      .attr('stroke-width', 1.5)
-      .attr('d', d3.line()
-        .curve(d3.curveCatmullRom)
-        .x(function(d) {
-          return xScale(d.date)
-        })
-        .y(function(d) {
-          return yScale(d[graph_selected_feature])
-        })
-      )
-
-    // Add the points
-    svg
-      .append('g')
-      .selectAll('dot')
-      .data(totaldata)
-      .enter()
-      .append('circle')
-      .attr('class', 'myCircle')
-      .attr('cx', function(d) {
-        return xScale(d.date)
-      })
-      .attr('cy', function(d) {
-        return yScale(d[graph_selected_feature])
-      })
-      .attr('r', 8)
-      .attr('stroke', '#000')
-      .attr('stroke-width', 3)
-      .attr('fill', '#feb24c')
-      .on('click', tooltipClick)
-  }
-  var districtSelect = d3.select('#districtSelect');
-  var districtOpts = districtSelect.selectAll(null)
-    .data(districtList)
-    .enter()
-    .append('option')
-    .attr('value', function(d) {
-      return d;
-    })
-    .text(function(d) {
-      return d;
-    });
-  districtSelect.property('value', graph_selected_district);
-  districtSelect.on('change', districtChangeListener);
-  var graphFeatureSelect = d3.select('#graphFeatureSelect');
-  graphFeatureSelect.property('value', graph_selected_feature);
-  graphFeatureSelect.on('change', graphFeatureChangeListener);
-
-  function updateGraph() {
-    svg.selectAll('*').remove();
-    drawGraph();
-  }
-
-  function districtChangeListener() {
-    if (this.selectedOptions.length > 0) {
-      var selOpt = this.selectedOptions[0].value;
-      graph_selected_district = selOpt;
-    }
-    updateGraph();
-  }
-
-  function graphFeatureChangeListener() {
-    if (this.selectedOptions.length > 0) {
-      var selOpt = this.selectedOptions[0].value;
-      graph_selected_feature = selOpt;
-    }
-    updateGraph();
-  }
-
-  drawGraph();
+var dates = [],
+  dateSelect = d3.select('#dateSelect');
+Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
+  dates.push(key);
+  selected_date = key;
 });
+
+var dateLabels = [];
+dates.forEach(function(item, index) {
+  var curdate = d3.timeParse('%d-%m-%Y')(item);
+  dateLabels.push(curdate);
+});
+
+var config = {
+  type: 'line',
+  data: {
+    labels: dateLabels,
+    datasets: [
+    ]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: false
+    },
+    tooltips: {
+      mode: 'index',
+      intersect: false,
+    },
+    hover: {
+      mode: 'nearest',
+      intersect: true
+    },
+    scales: {
+      xAxes: [{
+        display: true,
+        type: 'time',
+        distribution: 'series',
+        scaleLabel: {
+          display: true,
+          labelString: 'Date'
+        }
+      }],
+      yAxes: [{
+        display: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Value'
+        }
+      }]
+    },
+  }
+};
+
+
+var myChart = null;
+
+window.onload = function() {
+  var graph_selected_feature = 'active';
+  var ctx = document.getElementById('myChart').getContext('2d');
+  myChart = new Chart(ctx, config);
+
+  d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
+    var parsedData = {};
+    Object.keys(pivotData).forEach(function(districtName) {
+      var districtData = pivotData[districtName];
+      var parsedDistrictData = districtData.map(function(item) {
+        item.date = d3.timeParse('%Y-%m-%d')(item.date);
+        item.observation = parseInt(item.observation);
+        item.isolation = parseInt(item.isolation);
+        item.total_hospitalized = parseInt(item.total_hospitalized);
+        item.hospitalized_today = parseInt(item.hospitalized_today);
+        item.active = parseInt(item.active);
+        return item;
+      });
+      parsedData[districtName] = parsedDistrictData;
+    });
+    // add to chart data
+    function updateGraph() {
+      // initialize datasets
+      config.data.datasets = [];
+      config.options.scales.yAxes[0].scaleLabel.labelString = graphFeatureMap[graph_selected_feature];
+      Object.keys(parsedData).forEach(function(key, index) {
+        console.log(key)
+        var districtData = parsedData[key].sort(function(a, b) { return a.date-b.date; });
+        var newDataset = {
+          label: key,
+          data: districtData.map(function (item) { return item[graph_selected_feature]; }),
+          fill: false,
+          borderColor: colorList[index],
+          backgroundColor: colorList[index],
+          hidden: (key !== 'Total'),
+        };
+        config.data.datasets.push(newDataset);
+        myChart.update();
+      });
+    }
+    // initialize graph feature change option
+    var graphFeatureSelect = d3.select('#graphFeatureSelect');
+    graphFeatureSelect.property('value', graph_selected_feature);
+    graphFeatureSelect.on('change', graphFeatureChangeListener);
+    // listener for graph feature selector
+    function graphFeatureChangeListener() {
+      if (this.selectedOptions.length > 0) {
+        var selOpt = this.selectedOptions[0].value;
+        graph_selected_feature = selOpt;
+      }
+      updateGraph();
+    }
+    // running updategraph for the first time
+    updateGraph();
+  });
+}
 
 var map = L.map('map', {
   attributionControl: false
@@ -239,18 +184,6 @@ function getLatestDate(dateArr) {
   return nd.getDate() + '-' + (nd.getMonth() + 1) + '-' + nd.getFullYear();
 }
 
-
-// load data
-var data = {},
-  selected_date = '',
-  selected_feature = 'active';
-
-var dates = [],
-  dateSelect = d3.select('#dateSelect');
-Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
-  dates.push(key);
-  selected_date = key;
-});
 // dates in reverse order
 dates.reverse();
 selected_date = getLatestDate(dates);
@@ -325,9 +258,10 @@ legend.update = function() {
 function infobarUpdate() {
   var infobar = d3.select('#infobar');
   if (selected_date !== undefined) {
-    infobar.html('<p class="subtitle is-5">People with COVID-19 in Kerala: <b>' +
+    infobar.html('<p class="subtitle is-4">People with COVID-19 in Kerala: <b>' +
       dataIndex.daily_bulletin[selected_date]['total_active'] +
       '</b>  Deaths: <b>' + dataIndex.daily_bulletin[selected_date]['deaths'] +  '</b></p>' +
+      '<p class="subtitle is-5"> Total cases recorded: <b>' + dataIndex.daily_bulletin[selected_date]['total_positive'] + '</b></p>' +
       '<p class="subtitle is-6"> Samples sent: <b>' + dataIndex.daily_bulletin[selected_date]['sample_sent'] +
       '</b> Samples negative: <b>' + dataIndex.daily_bulletin[selected_date]['sample_negative'] + '</b></p>')
   }
@@ -494,14 +428,14 @@ function fetchDataForDate(date) {
 fetchDataForDate(selected_date);
 infobarUpdate();
 
-// tab switching code
-var tabs = d3.selectAll('#tabs li');
-tabs.on('click', function() {
-  var self = d3.select(this);
-  var tabNum = self.attr('data-tab');
-  tabs.classed('is-active', false);
-  self.classed('is-active', true);
-
-  d3.selectAll('#tab-container section').classed('is-active', false);
-  d3.selectAll('#tab-container section[data-content="' + tabNum + '"]').classed('is-active', true);
-});
+// // tab switching code
+// var tabs = d3.selectAll('#tabs li');
+// tabs.on('click', function() {
+//   var self = d3.select(this);
+//   var tabNum = self.attr('data-tab');
+//   tabs.classed('is-active', false);
+//   self.classed('is-active', true);
+//
+//   d3.selectAll('#tab-container section').classed('is-active', false);
+//   d3.selectAll('#tab-container section[data-content="' + tabNum + '"]').classed('is-active', true);
+// });

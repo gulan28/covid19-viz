@@ -13,7 +13,7 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
 	<link rel="manifest" href="./favicon/site.webmanifest">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.1/css/bulma.min.css">
 
 	<!-- Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160729457-1"></script>
@@ -29,7 +29,9 @@
 	</script>
 	<script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
 	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
 	<style>
 		html,
@@ -45,6 +47,7 @@
 		section {
 			padding-left: 0.8rem !important;
 			padding-right: 0.8rem !important;
+			padding-top: 0.4rem !important;
 		}
 
 		#map {
@@ -89,63 +92,33 @@
 
 		.infobar-hr {
 			margin-top: 0.5rem;
+			margin-bottom: 0.5rem;
 			width: 80%;
 			margin-left: auto;
 			margin-right: auto;
 		}
 
-		#tab-container section {
+		/* #tab-container section {
 			display: none;
-		}
+		} */
 
 		.section.top {
 			padding-bottom: 1rem !important;
+		}
+
+		.section.extratop {
+			padding-top: 2.5rem !important;
 		}
 
 		.section.extra {
 			padding-top: 1rem !important;
 		}
 
-		#tab-container section.is-active {
+		/* #tab-container section.is-active {
 			padding-top: 0.1rem;
 			padding-bottom: 0.1rem;
 			display: block;
-		}
-
-		.svg-container {
-			display: inline-block;
-			position: relative;
-			width: 100%;
-			padding-top: 34%px;
-			padding-bottom: 64%;
-			/* aspect ratio */
-			vertical-align: top;
-			overflow: hidden;
-		}
-
-		.svg-content-responsive {
-			display: inline-block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-		}
-		.tooltip {
-			display: block;
-
-		}
-
-		/* Media queries */
-		@media only screen
-		  and (min-device-width: 320px)
-		  and (max-device-width: 480px)
-		  and (-webkit-min-device-pixel-ratio: 2) {
-				.svg-container {
-					width: 115%;
-					padding-bottom: 120%;
-				}
-		}
-
+		} */
 
 		@media only screen and (max-width: 768px) {
 			/* For mobile phones: */
@@ -154,8 +127,6 @@
 			}
 		}
 	</style>
-
-
 </head>
 
 <body>
@@ -174,26 +145,20 @@
 					</div>
 				</div>
 			</div>
-
-			<div class="columns is-centered">
-				<div class="column is-half">
-					<div class="tabs is-centered" id="tabs">
-						<ul>
-							<li class="is-active" data-tab="1"><a>Map</a></li>
-							<li data-tab="2"><a>Graph</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
 	</section>
 
-	<div id="tab-container">
-		<section class="section is-active" data-content="1">
 
+	<section class="section">
+		<div class="container">
 			<!-- section starts here -->
 			<div class="columns is-centered">
 				<div class="column is-half">
-					<div id="infobar" class="has-text-centered"></div>
+					<div class="notification is-info is-light">
+						<div id="infobar" class="has-text-centered"></div>
+					</div>
+					<hr/>
+					<h4 class="title is-4 has-text-centered">Districtwise data.</h4>
+					<h6 class="subtitle is-6 has-text-centered">ജില്ല തിരിച്ചുള്ള വിവരങ്ങൾ.</h6>
 					<hr class="infobar-hr"/>
 					<div class="level is-mobile">
 						<div class="level-item">
@@ -239,32 +204,18 @@
 					<div id="map" class="center"></div>
 				</div>
 			</div>
-			<!-- section ends here	 -->
-		</section>
-		<section class="section" data-content="2">
-			<div class="columns is-centered">
-				<div class="column is-half-desktop is-full-mobile has-text-centered">
-					<p class="title is-4 is-spaced">Graphs showing changes over time.</p>
-					<p class="subtitle is-6">കാലക്രമേണ ഉള്ള മാറ്റങ്ങൾ കാണിക്കുന്ന ഗ്രാഫുകൾ.</p>
-				</div>
-			</div>
+		<!-- section ends here	 -->
+    </div>
+	</section>
+
+	<section class="section extratop">
+		<div class="container">
 			<div class="columns is-centered">
 				<div class="column is-half-desktop is-full-mobile">
+					<h4 class="title is-4 has-text-centered">Graphs showing changes over time.</h4>
+					<h6 class="subtitle is-6 has-text-centered">കാലക്രമേണ ഉള്ള മാറ്റങ്ങൾ കാണിക്കുന്ന ഗ്രാഫുകൾ.</h6>
+					<hr class="infobar-hr"/>
 					<div class="level is-mobile">
-						<div class="level-item">
-							<div class="field">
-								<label class="label is-small">
-									District
-								</label>
-								<div class="control">
-									<div class="select is-small">
-										<select name="district" id="districtSelect">
-										</select>
-									</div>
-								</div>
-							</div>
-						</div>
-
 						<div class="level-item">
 							<div class="field">
 								<label class="label is-small">
@@ -285,12 +236,11 @@
 						</div>
 
 					</div>
-					<div id="graph" class="has-text-centered svg-container">
-					</div>
-					</diiv>
+					<canvas id="myChart" width="400" height="400"></canvas>
 				</div>
-		</section>
-	</div>
+			</div>
+		</div>
+	</section>
 
 	<section class="section extra">
 		<div class="columns is-centered">
