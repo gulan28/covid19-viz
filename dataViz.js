@@ -15,7 +15,7 @@ var graphFeatureMap = {
   'observation': 'People under observation',
 }
 
-var colorList = [
+var districtColorList = [
   '#e6739f',
   '#efb1ff',
   '#c06c84',
@@ -31,7 +31,9 @@ var colorList = [
   '#e8f044',
   '#a7e9af',
   '#d63447',
-];
+],
+chartBg = '#f4eeff';
+
 
 // load data
 var data = {},
@@ -39,17 +41,96 @@ var data = {},
   selected_feature = 'active';
 
 var dates = [],
-  dateSelect = d3.select('#dateSelect');
+  dateLabels = [],
+  dateSelect = d3.select('#dateSelect'),
+  active = [],
+  positive = [],
+  recovered = [],
+  deaths = [];
 Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
+  var curdate = d3.timeParse('%d-%m-%Y')(key);
+  var item = dataIndex.daily_bulletin[key];
   dates.push(key);
+  dateLabels.push(curdate);
   selected_date = key;
+  active.push(item.total_active);
+  positive.push(item.total_positive);
+  deaths.push(item.deaths);
+  recovered.push((item.total_positive - (item.total_active + item.deaths)));
 });
 
-var dateLabels = [];
-dates.forEach(function(item, index) {
-  var curdate = d3.timeParse('%d-%m-%Y')(item);
-  dateLabels.push(curdate);
-});
+var summaryConfig = {
+  type: 'line',
+  data: {
+    labels: dateLabels,
+    datasets: [
+      {
+        label: 'Total positive',
+        data: positive,
+        borderColor: '#1f4068',
+        backgroundColor: '#1f4068',
+        fill: false,
+        pointRadius: 2,
+      },
+      {
+        label: 'Active',
+        data: active,
+        borderColor: '#ffa34d',
+        backgroundColor: '#ffa34d',
+        fill: false,
+        pointRadius: 2,
+      },
+      {
+        label: 'Recovered',
+        data: recovered,
+        borderColor: '#1eb2a6',
+        backgroundColor: '#1eb2a6',
+        fill: false,
+        pointRadius: 2,
+      },
+      {
+        label: 'Deaths',
+        data: deaths,
+        borderColor: '#b80d57',
+        backgroundColor: '#b80d57',
+        fill: false,
+        pointRadius: 2,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: false
+    },
+    tooltips: {
+      mode: 'index',
+      intersect: false,
+    },
+    hover: {
+      mode: 'nearest',
+      intersect: true
+    },
+    scales: {
+      xAxes: [{
+        display: true,
+        type: 'time',
+        distribution: 'series',
+        scaleLabel: {
+          display: true,
+          labelString: 'Date'
+        }
+      }],
+      yAxes: [{
+        display: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Value'
+        }
+      }]
+    },
+  }
+};
 
 var config = {
   type: 'line',
@@ -93,12 +174,17 @@ var config = {
 };
 
 
-var myChart = null;
+var myChart = null, summaryChart = null;
 
 window.onload = function() {
   var graph_selected_feature = 'active';
-  var ctx = document.getElementById('myChart').getContext('2d');
-  myChart = new Chart(ctx, config);
+  var chartElem = document.getElementById('myChart');
+  var summaryChartElem = document.getElementById('summaryChart');
+  var chartCtx = chartElem.getContext('2d');
+  var summaryCtx = summaryChartElem.getContext('2d');
+  myChart = new Chart(chartCtx, config);
+  summaryChartElem.style.backgroundColor = chartBg;
+  summaryChart = new Chart(summaryCtx, summaryConfig);
 
   d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     var parsedData = {};
@@ -121,15 +207,16 @@ window.onload = function() {
       config.data.datasets = [];
       config.options.scales.yAxes[0].scaleLabel.labelString = graphFeatureMap[graph_selected_feature];
       Object.keys(parsedData).forEach(function(key, index) {
-        console.log(key)
         var districtData = parsedData[key].sort(function(a, b) { return a.date-b.date; });
         var newDataset = {
           label: key,
           data: districtData.map(function (item) { return item[graph_selected_feature]; }),
           fill: false,
-          borderColor: colorList[index],
-          backgroundColor: colorList[index],
+          borderColor: districtColorList[index],
+          backgroundColor: districtColorList[index],
           hidden: (key !== 'Total'),
+          pointRadius: 4,
+          pointHoverRadius: 10,
         };
         config.data.datasets.push(newDataset);
         myChart.update();
