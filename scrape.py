@@ -19,7 +19,7 @@ district_map = {
     'PKD': 'Palakkad',
     'MPM': 'Malappuram',
     'KKD': 'Kozhikode',
-    'WND': 'Wayanad',
+    'WYD': 'Wayanad',
     'KNR': 'Kannur',
     'KGD': 'Kasaragod',
     'TOTAL': 'Total'
