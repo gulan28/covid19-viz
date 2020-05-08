@@ -68,6 +68,7 @@ var dataIndex = {
     '5-5-2020': {file: 'data_5_5_2020.csv', sample_sent: 33800, sample_negative: 33265, total_active: 37, total_positive: 502, deaths: 3},
     '6-5-2020': {file: 'data_6_5_2020.csv', sample_sent: 34599, sample_negative: 34063, total_active: 30, total_positive: 502, deaths: 3},
     '7-5-2020': {file: 'data_7_5_2020.csv', sample_sent: 35171, sample_negative: 34519, total_active: 25, total_positive: 502, deaths: 3},
+    '8-5-2020': {file: 'data_8_5_2020.csv', sample_sent: 35886, sample_negative: 35355, total_active: 16, total_positive: 503, deaths: 3},
   },
   pivot: {file: 'pivot.json'}
 }
