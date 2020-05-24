@@ -82,8 +82,9 @@ var dataIndex = {
     '19-5-2020': {file: 'data_19_5_2020.csv', sample_sent: 46958, sample_negative: 45527, total_active: 142, total_positive: 642, deaths: 3},
     '20-5-2020': {file: 'data_20_5_2020.csv', sample_sent: 48543, sample_negative: 46961, total_active: 161, total_positive: 666, deaths: 3},
     '21-5-2020': {file: 'data_21_5_2020.csv', sample_sent: 49833, sample_negative: 48276, total_active: 177, total_positive: 690, deaths: 3},
-    '22-5-2020': {file: 'data_22_5_2020.csv', sample_sent: 51310, sample_negative: 49535, total_active: 216, total_positive: 732, deaths: 4},
-    '23-5-2020': {file: 'data_23_5_2020.csv', sample_sent: 52771, sample_negative: 51045, total_active: 275, total_positive: 794, deaths: 4},
+    '22-5-2020': {file: 'data_22_5_2020.csv', sample_sent: 51310, sample_negative: 49535, total_active: 216, total_positive: 732, deaths: 5},
+    '23-5-2020': {file: 'data_23_5_2020.csv', sample_sent: 52771, sample_negative: 51045, total_active: 275, total_positive: 794, deaths: 5},
+    '24-5-2020': {file: 'data_24_5_2020.csv', sample_sent: 53873, sample_negative: 52355, total_active: 322, total_positive: 847, deaths: 5},
   },
   pivot: {file: 'pivot.json'}
 }
