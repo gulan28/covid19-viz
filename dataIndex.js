@@ -85,6 +85,7 @@ var dataIndex = {
     '22-5-2020': {file: 'data_22_5_2020.csv', sample_sent: 51310, sample_negative: 49535, total_active: 216, total_positive: 732, deaths: 5},
     '23-5-2020': {file: 'data_23_5_2020.csv', sample_sent: 52771, sample_negative: 51045, total_active: 275, total_positive: 794, deaths: 5},
     '24-5-2020': {file: 'data_24_5_2020.csv', sample_sent: 53873, sample_negative: 52355, total_active: 322, total_positive: 847, deaths: 5},
+    '25-5-2020': {file: 'data_25_5_2020.csv', sample_sent: 54899, sample_negative: 53704, total_active: 359, total_positive: 896, deaths: 5},
   },
   pivot: {file: 'pivot.json'}
 }
