@@ -38,7 +38,9 @@ chartBg = '#f4eeff';
 // load data
 var data = {},
   selected_date = '',
-  selected_feature = 'active';
+  selected_feature = 'active',
+  prevDaySample = 0,
+  prevDayNegSample = 0;
 
 var dates = [],
   dateLabels = [],
@@ -46,7 +48,10 @@ var dates = [],
   active = [],
   positive = [],
   recovered = [],
-  deaths = [];
+  deaths = [],
+  totSample = [],
+  positiveToday = [],
+  tpRate = [];
 Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   var curdate = d3.timeParse('%d-%m-%Y')(key);
   var item = dataIndex.daily_bulletin[key];
@@ -56,7 +61,14 @@ Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   active.push(item.total_active);
   positive.push(item.total_positive);
   deaths.push(item.deaths);
+  var totTodaySample = item.sample_sent - prevDaySample;
+  totSample.push(totTodaySample);
+  positiveToday.push(item.positive_today);
+  var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodaySample * 100 : 0);
+  tpRate.push(tpRateToday.toFixed(2));
   recovered.push((item.total_positive - (item.total_active + item.deaths)));
+  prevDaySample = item.sample_sent;
+  prevDayNegSample = item.sample_negative;
 });
 
 var summaryConfig = {
@@ -132,6 +144,91 @@ var summaryConfig = {
   }
 };
 
+var sampleOffset = -25
+var sampleConfig = {
+  type: 'bar',
+  data: {
+    labels: dateLabels.slice(sampleOffset),
+    datasets: [
+      {
+        type: 'line',
+        label: 'Test positivity rate (TPR)',
+        yAxisID: 'tpr',
+        data: tpRate.slice(sampleOffset),
+        borderColor: '#FDBB07',
+        backgroundColor: '#FDBB07',
+        fill: false,
+        pointRadius: 3,
+      },
+      {
+        type: 'bar',
+        label: 'Total tests conducted',
+        yAxisID: 'ttc',
+        data: totSample.slice(sampleOffset),
+        borderColor: '#1f4068',
+        backgroundColor: '#1f4068',
+        fill: true,
+        pointRadius: 2,
+      },
+      {
+        type: 'bar',
+        label: 'Positive cases found',
+        yAxisID: 'ttc',
+        data: positiveToday.slice(sampleOffset),
+        borderColor: '#D4425A',
+        backgroundColor: '#D4425A',
+        fill: true,
+        pointRadius: 2,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: false
+    },
+    tooltips: {
+      mode: 'index',
+      intersect: false,
+    },
+    hover: {
+      mode: 'nearest',
+      intersect: true
+    },
+    scales: {
+      xAxes: [{
+        display: true,
+        type: 'time',
+        distribution: 'series',
+        stacked: true,
+        offset: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Date'
+        }
+      }],
+      yAxes: [{
+        id: 'ttc',
+        display: true,
+        position: 'left',
+        stacked: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Value'
+        }
+      },{
+        id: 'tpr',
+        position: 'right',
+        display: true,
+        scaleLabel: {
+          display: true,
+          labelString: 'Test positivity rate'
+        }
+      }]
+    },
+  }
+};
+
 var config = {
   type: 'line',
   data: {
@@ -174,7 +271,7 @@ var config = {
 };
 
 
-var myChart = null, summaryChart = null;
+var myChart = null, summaryChart = null, sampleChart = null;
 
 window.onload = function() {
   var graph_selected_feature = 'active';
@@ -182,9 +279,12 @@ window.onload = function() {
   var summaryChartElem = document.getElementById('summaryChart');
   var chartCtx = chartElem.getContext('2d');
   var summaryCtx = summaryChartElem.getContext('2d');
+  var sampleElem = document.getElementById('sampleChart');
+  var sampleCtx = sampleElem.getContext('2d');
   myChart = new Chart(chartCtx, config);
   summaryChartElem.style.backgroundColor = chartBg;
   summaryChart = new Chart(summaryCtx, summaryConfig);
+  sampleChart = new Chart(sampleCtx, sampleConfig);
 
   d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     var parsedData = {};
