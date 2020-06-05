@@ -176,7 +176,7 @@ var sampleConfig = {
       },
       {
         type: 'bar',
-        label: 'Total tests conducted',
+        label: 'Tests done today',
         yAxisID: 'ttc',
         data: totSample.slice(sampleOffset),
         borderColor: '#1f4068',
