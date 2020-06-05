@@ -39,8 +39,7 @@ chartBg = '#f4eeff';
 var data = {},
   selected_date = '',
   selected_feature = 'active',
-  prevDaySample = 0,
-  prevDayNegSample = 0;
+  prevDaySample = 0;
 
 var dates = [],
   dateLabels = [],
@@ -51,7 +50,9 @@ var dates = [],
   deaths = [],
   totSample = [],
   positiveToday = [],
-  tpRate = [];
+  tpRate = [],
+  tpRateMovAvg = [];
+
 Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   var curdate = d3.timeParse('%d-%m-%Y')(key);
   var item = dataIndex.daily_bulletin[key];
@@ -61,15 +62,17 @@ Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   active.push(item.total_active);
   positive.push(item.total_positive);
   deaths.push(item.deaths);
-  var totTodaySample = item.sample_sent - prevDaySample;
-  totSample.push(totTodaySample);
+  var totTodaySample = item.sample_negative - prevDaySample;
+  var totTodayDoneSample = totTodaySample + item.positive_today
+  totSample.push(totTodayDoneSample);
   positiveToday.push(item.positive_today);
-  var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodaySample * 100 : 0);
+  var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodayDoneSample * 100 : 0);
   tpRate.push(tpRateToday.toFixed(2));
   recovered.push((item.total_positive - (item.total_active + item.deaths)));
-  prevDaySample = item.sample_sent;
-  prevDayNegSample = item.sample_negative;
+  prevDaySample = item.sample_negative;
 });
+
+tpRateMovAvg = movingAvg(7, positiveToday, totSample);
 
 var summaryConfig = {
   type: 'line',
@@ -157,6 +160,17 @@ var sampleConfig = {
         data: tpRate.slice(sampleOffset),
         borderColor: '#FDBB07',
         backgroundColor: '#FDBB07',
+        fill: false,
+        hidden: true,
+        pointRadius: 3,
+      },
+      {
+        type: 'line',
+        label: 'Test positivity rate (TPR) (7 day moving avg)',
+        yAxisID: 'tpr',
+        data: tpRateMovAvg.slice(sampleOffset),
+        borderColor: '#31a354',
+        backgroundColor: '#31a354',
         fill: false,
         pointRadius: 3,
       },
@@ -357,7 +371,31 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   zoomOffset: -1
 }).addTo(map);
 
-// helper to get latest date from array
+// helpers
+
+function movingAvg(windowsize, positive, total) {
+    var p1 = positive[0], pn = positive[0], mavg = 0;
+    var t1 = total[0], tn = total[0];
+    var totSum = 0, posSum = 0;
+    var mavgList = [];
+    for (var i=0; i<positive.length; i++) {
+        pn = positive[i];
+        tn = total[i]
+        if (i < windowsize) {
+            totSum = totSum + tn;
+            posSum = posSum + pn;
+        } else {
+            p1 = positive[i - windowsize];
+            t1 = total[i - windowsize];
+            totSum = totSum + tn - t1;
+            posSum = posSum + pn - p1;
+        }
+        mavg = posSum / totSum;
+        mavgList.push((mavg * 100).toFixed(2));
+    }
+    return mavgList;
+}
+
 function getLatestDate(dateArr) {
   var dd, mm, yyyy, spl, newd;
   var convDateList = dateArr.map(function(d) {
