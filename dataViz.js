@@ -487,7 +487,7 @@ function infobarUpdate() {
       dataIndex.daily_bulletin[selected_date]['total_active'] +
       '</b>  Deaths: <b>' + dataIndex.daily_bulletin[selected_date]['deaths'] +  '</b></p>' +
       '<p class="subtitle is-5"> Total cases recorded: <b>' + dataIndex.daily_bulletin[selected_date]['total_positive'] + '</b></p>' +
-      '<p class="subtitle is-6"> Samples sent: <b>' + dataIndex.daily_bulletin[selected_date]['sample_sent'] +
+      '<p class="subtitle is-6"> New samples sent: <b>' + dataIndex.daily_bulletin[selected_date]['sample_sent'] +
       '</b> Samples negative: <b>' + dataIndex.daily_bulletin[selected_date]['sample_negative'] + '</b></p>')
   }
 }
