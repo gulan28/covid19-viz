@@ -6,7 +6,9 @@ import json
 import os
 import re
 
-FILE_REG = re.compile('^data_(?P<day>\d+)_(?P<month>\d+)_(?P<year>\d+)\.csv', re.I)
+FILE_REG = re.compile('^data_(?P<day>\d+)_(?P<month>\d+)_(?P<year>\d+)\.csv',
+                      re.I)
+
 
 def process_csv():
     csvpath = './data/*.csv'
@@ -39,7 +41,9 @@ def get_date(filename):
 
 def csv_writer(filepath, data):
     with open(filepath, 'w') as f:
-        w = csv.DictWriter(f, fieldnames=set([key for row in data for key in row.keys()]))
+        w = csv.DictWriter(f,
+                           fieldnames=set(
+                               [key for row in data for key in row.keys()]))
         w.writeheader()
         w.writerows(data)
 
@@ -66,4 +70,3 @@ def create_districtwise_pivot():
 
 if __name__ == '__main__':
     create_districtwise_pivot()
-                
