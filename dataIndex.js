@@ -101,6 +101,7 @@ var dataIndex = {
     '7-6-2020': {file: 'data_7_6_2020.csv', sample_sent: 83875, sample_negative: 79957, total_active: 1095, total_positive: 1914, deaths: 15, positive_today: 107},
     '8-6-2020': {file: 'data_8_6_2020.csv', sample_sent: 85676, sample_negative: 82362, total_active: 1174, total_positive: 2005, deaths: 16, positive_today: 91},
     '9-6-2020': {file: 'data_9_6_2020.csv', sample_sent: 95397, sample_negative: 90662, total_active: 1231, total_positive: 2096, deaths: 16, positive_today: 91},
+    '10-6-2020': {file: 'data_10_6_2020.csv', sample_sent: 98304, sample_negative: 93475, total_active: 1238, total_positive: 2161, deaths: 17, positive_today: 65},
   },
   pivot: {file: 'pivot.json'}
 }
