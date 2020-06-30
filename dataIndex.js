@@ -121,6 +121,7 @@ var dataIndex = {
     '27-6-2020': {file: 'data_27_6_2020.csv', total_passengers: 348237, sample_sent: 165374, sample_negative: 159403, total_active: 1939, total_positive: 4071, deaths: 22, positive_today: 195},
     '28-6-2020': {file: 'data_28_6_2020.csv', total_passengers: 358250, sample_sent: 169260, sample_negative: 163204, total_active: 2015, total_positive: 4189, deaths: 22, positive_today: 118},
     '29-6-2020': {file: 'data_29_6_2020.csv', total_passengers: 367483, sample_sent: 171846, sample_negative: 167015, total_active: 2057, total_positive: 4311, deaths: 23, positive_today: 121},
+    '30-6-2020': {file: 'data_30_6_2020.csv', total_passengers: 376006, sample_sent: 177097, sample_negative: 171113, total_active: 2112, total_positive: 4442, deaths: 24, positive_today: 131},
   },
   pivot: {file: 'pivot.json'}
 }
