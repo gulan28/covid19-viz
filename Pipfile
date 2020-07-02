@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 requests = "*"
 beautifulsoup4 = "*"
+spacy = "*"
 
 [requires]
 python_version = "3.8"
