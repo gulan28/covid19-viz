@@ -560,7 +560,9 @@ legend.update = function() {
 function infobarUpdate() {
   var infobar = d3.select('#infobar');
   if (selected_date !== undefined) {
-    infobar.html('<p class="subtitle is-4">People with COVID-19 in Kerala: <b>' +
+    infobar.html('<p class="subtitle is-5">Cases reported today: <b>'+
+      dataIndex.daily_bulletin[selected_date]['positive_today'] +'</b></p>'+
+      '<p class="subtitle is-5">Total active cases in Kerala: <b>' +
       dataIndex.daily_bulletin[selected_date]['total_active'] +
       '</b>  Deaths: <b>' + dataIndex.daily_bulletin[selected_date]['deaths'] +  '</b></p>' +
       '<p class="subtitle is-5"> Total cases recorded: <b>' + dataIndex.daily_bulletin[selected_date]['total_positive'] + '</b></p>' +
