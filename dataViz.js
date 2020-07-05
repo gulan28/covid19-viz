@@ -559,8 +559,10 @@ legend.update = function() {
 
 function infobarUpdate() {
   var infobar = d3.select('#infobar');
+  var dateStr = moment(d3.timeParse('%d-%m-%Y')(selected_date)).format('MMMM Do YYYY');
   if (selected_date !== undefined) {
-    infobar.html('<p class="subtitle is-5">Cases reported today: <b>'+
+    infobar.html('<p class="subtitle is-5"><b>'+dateStr+'</b></p>'+
+      '<p class="subtitle is-5">Cases reported today: <b>'+
       dataIndex.daily_bulletin[selected_date]['positive_today'] +'</b></p>'+
       '<p class="subtitle is-5">Total active cases in Kerala: <b>' +
       dataIndex.daily_bulletin[selected_date]['total_active'] +
