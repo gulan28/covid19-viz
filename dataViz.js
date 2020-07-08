@@ -69,7 +69,8 @@ Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   positiveToday.push(item.positive_today);
   var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodayDoneSample * 100 : 0);
   tpRate.push(tpRateToday.toFixed(2));
-  recovered.push((item.total_positive - (item.total_active + item.deaths)));
+  // subtracted 4. refer to https://dashboard.kerala.gov.in/dailyreporting.php
+  recovered.push((item.total_positive - (item.total_active + item.deaths + 4)));
   prevDaySample = item.sample_negative;
   totalExpat.push(item.total_passengers);
 });
