@@ -159,7 +159,9 @@ var dataIndex = {
     '4-8-2020': {file: 'data_4_8_2020.csv', total_passengers: 662264, sample_sent: 409095, sample_negative: 389960, total_active: 11540, total_positive: 27956, deaths: 87, positive_today: 1083},
     '5-8-2020': {file: 'data_5_8_2020.csv', total_passengers: 668075, sample_sent: 417939, sample_negative: 400003, total_active: 11492, total_positive: 29151, deaths: 94, positive_today: 1195},
     '6-8-2020': {file: 'data_6_8_2020.csv', total_passengers: 673120, sample_sent: 425570, sample_negative: 407241, total_active: 11983, total_positive: 30449, deaths: 97, positive_today: 1298},
-    '7-8-2020': {file: 'data_7_8_2020.csv', total_passengers: 774224, sample_sent: 433687, sample_negative: 414141, total_active: 12411, total_positive: 31700, deaths: 102, positive_today: 1251},
+    '7-8-2020': {file: 'data_7_8_2020.csv', total_passengers: 679336, sample_sent: 433687, sample_negative: 414141, total_active: 12411, total_positive: 31700, deaths: 102, positive_today: 1251},    
+    //'7-8-2020': {file: 'data_7_8_2020.csv', total_passengers: 774224, sample_sent: 433687, sample_negative: 414141, total_active: 12411, total_positive: 31700, deaths: 102, positive_today: 1251},
+    '8-8-2020': {file: 'data_8_8_2020.csv', total_passengers: 685543, sample_sent: 441346, sample_negative: 422460, total_active: 12109, total_positive: 33120, deaths: 106, positive_today: 1420},
   },
   pivot: {file: 'pivot.json'}
 }
