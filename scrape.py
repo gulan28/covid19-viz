@@ -188,7 +188,7 @@ def get_active_details_today():
     assert len(active_data) == 15
     # get kerala datewise details table as well
     kerala_data = {i["date"]: i for i in extract_datewise_active(soup, "KERALA")}
-    return (kerala_data, active_data)
+    return (kerala_data, active_data, last_date)
 
 
 def get_bulk_active_details():
@@ -306,19 +306,25 @@ def edit_data_index(date_list, totals_data, testing_data, kerala_data):
 
 
 def get_data_for_date(dates=[], get_only_curr=False):
-    kd, active_today = get_active_details_today()
-    time.sleep(4)
-    testing_data = get_testing_details()
-    time.sleep(3)
+    kd, active_today, updated_date = get_active_details_today()
     if not get_only_curr:
         active_data = get_bulk_active_details()
     else:
+        assert dates[0] == updated_date, "Date mismatch. Site updated till {}".format(
+            updated_date
+        )
         active_data = active_today
+    time.sleep(2)
+    testing_data = get_testing_details()
+    time.sleep(3)
     active_data_pivot = active_detail_pivot(active_data, get_only_curr)
     totals_data = {}
     for d in dates:
         qar_data = get_quarantine_details(d)
         active = active_data_pivot[d]
+        if not active:
+            print("Active details empty for date: {}".format(d))
+            continue
         csv_data = []
         for dat in qar_data:
             dist_code = dat.pop("dist_code")
