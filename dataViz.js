@@ -51,8 +51,7 @@ var dates = [],
   totSample = [],
   positiveToday = [],
   tpRate = [],
-  tpRateMovAvg = [],
-  totalExpat = [];
+  tpRateMovAvg = [];
 
 Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   var curdate = d3.timeParse('%d-%m-%Y')(key);
@@ -70,9 +69,8 @@ Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodayDoneSample * 100 : 0);
   tpRate.push(tpRateToday.toFixed(2));
   // subtracted 4. refer to https://dashboard.kerala.gov.in/dailyreporting.php
-  recovered.push((item.total_positive - (item.total_active + item.deaths + 4)));
+  recovered.push((item.total_positive - (item.total_active + item.deaths + 66)));
   prevDaySample = item.sample_negative;
-  totalExpat.push(item.total_passengers);
 });
 
 tpRateMovAvg = movingAvg(7, positiveToday, totSample);
@@ -149,77 +147,6 @@ var summaryConfig = {
     },
   }
 };
-
-var expatOffset = -35;
-var expatConfig = {
-  type: 'line',
-  data: {
-    labels: dateLabels.slice(expatOffset),
-    datasets: [
-      {
-        yAxisID: 'incoming',
-        label: 'Total Expatriates',
-        data: totalExpat.slice(expatOffset),
-        borderColor: '#1f4068',
-        backgroundColor: '#1f4068',
-        fill: false,
-        pointRadius: 2,
-      },
-      {
-        yAxisID: 'positive',
-        label: 'Total positive cases',
-        data: positive.slice(expatOffset),
-        borderColor: '#b80d57',
-        backgroundColor: '#b80d57',
-        fill: false,
-        pointRadius: 2,
-      },
-    ]
-  },
-  options: {
-    responsive: true,
-    title: {
-      display: false
-    },
-    tooltips: {
-      mode: 'index',
-      intersect: false,
-    },
-    hover: {
-      mode: 'nearest',
-      intersect: true
-    },
-    scales: {
-      xAxes: [{
-        display: true,
-        type: 'time',
-        distribution: 'series',
-        scaleLabel: {
-          display: true,
-          labelString: 'Date'
-        }
-      }],
-      yAxes: [{
-        id: 'incoming',
-        display: true,
-        scaleLabel: {
-          display: true,
-          labelString: 'Total incoming expats.',
-        }
-      },
-      {
-        id: 'positive',
-        position: 'right',
-        display: true,
-        scaleLabel: {
-          display: true,
-          labelString: 'positive cases per day',
-        }
-      },]
-    },
-  }
-};
-
 
 var sampleOffset = -25
 var sampleConfig = {
@@ -359,24 +286,21 @@ var config = {
 };
 
 
-var myChart = null, summaryChart = null, sampleChart = null, expatChart = null;
+var myChart = null, summaryChart = null, sampleChart = null;
 
 window.onload = function() {
   var graph_selected_feature = 'active';
   var chartElem = document.getElementById('myChart');
   var summaryChartElem = document.getElementById('summaryChart');
-  var expatChartElem = document.getElementById('expatChart');
   var chartCtx = chartElem.getContext('2d');
   var summaryCtx = summaryChartElem.getContext('2d');
   var sampleElem = document.getElementById('sampleChart');
   var sampleCtx = sampleElem.getContext('2d');
-  var expatCtx = expatChartElem.getContext('2d');
 
   myChart = new Chart(chartCtx, config);
   summaryChartElem.style.backgroundColor = chartBg;
   summaryChart = new Chart(summaryCtx, summaryConfig);
   sampleChart = new Chart(sampleCtx, sampleConfig);
-  expatChart = new Chart(expatCtx, expatConfig);
 
   d3.json('./data/' + dataIndex.pivot.file).then(function(pivotData) {
     var parsedData = {};
