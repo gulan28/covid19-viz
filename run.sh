@@ -12,6 +12,7 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
     git status;
     git add .;
     git commit -m "Adding data for $TODAY";
+    git push;
 else
     echo "Exiting";
     echo ""
