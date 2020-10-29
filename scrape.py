@@ -234,9 +234,6 @@ def get_testing_details():
         data_dict = dict(zip(TESTING_HEADER, cols))
         test_date = get_date(data_dict["date"])
         data_dict["date"] = test_date
-        total = int(data_dict["total_sent"])
-        positive = int(data_dict["total_positive"])
-        data_dict["total_negative"] = total - positive
         testing_data[test_date] = data_dict
     return testing_data
 
@@ -297,7 +294,7 @@ def edit_data_index(date_list, totals_data, testing_data, kerala_data):
         entry["deaths"] = int(total_day["deaths"])
         entry["positive_today"] = int(kd["confirmed"])
         entry["sample_sent"] = int(testing_day["total_sent"])
-        entry["sample_negative"] = int(testing_day["total_negative"])
+        entry["sample_sent_today"] = int(testing_day["sent_on_date"])
         entry["total_passengers"] = 0
         filename = "data_{}_{}_{}.csv".format(d.day, d.month, d.year)
         entry["file"] = filename

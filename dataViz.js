@@ -62,8 +62,7 @@ Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
   active.push(item.total_active);
   positive.push(item.total_positive);
   deaths.push(item.deaths);
-  var totTodaySample = item.sample_negative - prevDaySample;
-  var totTodayDoneSample = totTodaySample + item.positive_today
+  var totTodayDoneSample = item.sample_sent_today
   totSample.push(totTodayDoneSample);
   positiveToday.push(item.positive_today);
   var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodayDoneSample * 100 : 0);
@@ -492,8 +491,8 @@ function infobarUpdate() {
       dataIndex.daily_bulletin[selected_date]['total_active'] +
       '</b>  Deaths: <b>' + dataIndex.daily_bulletin[selected_date]['deaths'] +  '</b></p>' +
       '<p class="subtitle is-5"> Total cases recorded: <b>' + dataIndex.daily_bulletin[selected_date]['total_positive'] + '</b></p>' +
-      '<p class="subtitle is-6"> New samples sent: <b>' + dataIndex.daily_bulletin[selected_date]['sample_sent'] +
-      '</b> Samples negative: <b>' + dataIndex.daily_bulletin[selected_date]['sample_negative'] + '</b></p>')
+      '<p class="subtitle is-6"> Total samples sent: <b>' + dataIndex.daily_bulletin[selected_date]['sample_sent'] +
+      '</b> Samples sent today: <b>' + dataIndex.daily_bulletin[selected_date]['sample_sent_today'] + '</b></p>')
   }
 }
 
