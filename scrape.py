@@ -284,10 +284,18 @@ def edit_data_index(date_list, totals_data, testing_data, kerala_data):
             testing_day = testing_data[d]
         except KeyError:
             print("data not available for {}".format(d))
-            prevday = d - timedelta(days=1)
-            print("trying for {}".format(prevday))
-            # if data isn't available for current day, show previous day data
-            testing_day = testing_data[prevday]
+            available = False
+            prevday = d
+            while not available:
+                prevday -= timedelta(days=1)
+                print("trying for {}".format(prevday))
+                # if data isn't available for current day, show previous day data
+                try:
+                    testing_day = testing_data[prevday]
+                except KeyError:
+                    print("not available for {}".format(prevday))
+                else:
+                    available = True
         kd = kerala_data[d]
         entry["total_active"] = int(total_day["active"])
         entry["total_positive"] = int(total_day["confirmed"])
