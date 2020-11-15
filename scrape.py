@@ -94,6 +94,13 @@ def get_date(datearg):
     return date(day=dsplit[0], month=dsplit[1], year=dsplit[2])
 
 
+def getint(string):
+    try:
+        return int(string)
+    except (TypeError, ValueError):
+        return int("".join(filter(str.isdigit, string)))
+
+
 def csv_writer(filepath, data):
     with open(filepath, "w") as f:
         w = csv.DictWriter(f, fieldnames=set(CSV_HEADER))
@@ -245,8 +252,8 @@ def active_detail_pivot(active_data, get_only_curr=False):
         for value in values:
             v_date = value["date"]
             for key in ["confirmed", "deaths", "recovered"]:
-                count[key] += int(value[key])
-            count["active"] = int(value["active"])
+                count[key] += getint(value[key])
+            count["active"] = getint(value["active"])
             pivot_data[v_date][district] = copy.deepcopy(count)
     # set total if get_only_curr is False
     if not get_only_curr:
@@ -259,7 +266,7 @@ def active_detail_pivot(active_data, get_only_curr=False):
             }
             for district, value in dist_dict.items():
                 for key in total.keys():
-                    total[key] += int(value[key])
+                    total[key] += getint(value[key])
             total["district"] = "TOTAL"
             dist_dict["TOTAL"] = total
     return pivot_data
@@ -277,8 +284,25 @@ def edit_data_index(date_list, totals_data, testing_data, kerala_data):
         print("Wrote testing data to: {}".format(TEST_DATA_JSON))
     with open(DATA_INDEX_JSON, "r") as json_file:
         di_data = json.load(json_file)
+    # redundant code for updating testing details on dataIndex for every run
+    print("updating testing in dataIndex")
+    for d, v in testing_data.items():
+        datestr = "{}-{}-{}".format(d.day, d.month, d.year)
+        try:
+            testing_entry = di_data["daily_bulletin"][datestr]
+        except KeyError:
+            testing_entry = {}
+        testing_day = v
+        testing_entry["sample_sent"] = getint(testing_day["total_sent"])
+        testing_entry["sample_sent_today"] = getint(testing_day["sent_on_date"])
+        di_data["daily_bulletin"][datestr] = testing_entry
+    print("updating other details in dataIndex")
     for d in date_list:
-        entry = {}
+        datestr = "{}-{}-{}".format(d.day, d.month, d.year)
+        try:
+            entry = di_data["daily_bulletin"][datestr]
+        except KeyError:
+            entry = {}
         total_day = totals_data[d]
         try:
             testing_day = testing_data[d]
@@ -297,16 +321,16 @@ def edit_data_index(date_list, totals_data, testing_data, kerala_data):
                 else:
                     available = True
         kd = kerala_data[d]
-        entry["total_active"] = int(total_day["active"])
-        entry["total_positive"] = int(total_day["confirmed"])
-        entry["deaths"] = int(total_day["deaths"])
-        entry["positive_today"] = int(kd["confirmed"])
-        entry["sample_sent"] = int(testing_day["total_sent"])
-        entry["sample_sent_today"] = int(testing_day["sent_on_date"])
+        entry["total_active"] = getint(total_day["active"])
+        entry["total_positive"] = getint(total_day["confirmed"])
+        entry["deaths"] = getint(total_day["deaths"])
+        entry["positive_today"] = getint(kd["confirmed"])
+        if "sample_sent" not in entry:
+            entry["sample_sent"] = getint(testing_day["total_sent"])
+            entry["sample_sent_today"] = getint(testing_day["sent_on_date"])
         entry["total_passengers"] = 0
         filename = "data_{}_{}_{}.csv".format(d.day, d.month, d.year)
         entry["file"] = filename
-        datestr = "{}-{}-{}".format(d.day, d.month, d.year)
         di_data["daily_bulletin"][datestr] = entry
     with open(DATA_INDEX_JSON, "w") as json_file:
         json.dump(di_data, json_file)
