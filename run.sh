@@ -1,9 +1,16 @@
 #! /bin/bash
 
 TODAY=`date +'%Y-%m-%d'`;
-echo "Running scrape for $TODAY";
+numargs=$#;
+args=$@;
+if [ "$numargs" -ne "0" ]; then
+    echo "Running scrape for $args";
+    pipenv run python scrape.py $args;
+else
+    echo "Running scrape for $TODAY";
+    pipenv run python scrape.py;
+fi
 echo ""
-pipenv run python scrape.py;
 echo "Scraping worked? (y/n)? ";
 read answer;
 if [ "$answer" != "${answer#[Yy]}" ] ;then
