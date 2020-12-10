@@ -72,8 +72,6 @@ Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
 });
 
 tpRateMovAvg = movingAvg(7, positiveToday, totSample);
-console.log("tp rate moving avg", tpRateMovAvg.slice(-25));
-console.log("datelabels: ", dateLabels.slice(-25));
 
 var summaryConfig = {
   type: 'line',
