@@ -53,7 +53,13 @@ var dates = [],
   tpRate = [],
   tpRateMovAvg = [];
 
-Object.keys(dataIndex.daily_bulletin).forEach(function(key) {
+var dailybulletin_keys = Object.keys(dataIndex.daily_bulletin).sort(function(a, b){
+  var adate = d3.timeParse('%d-%m-%Y')(a);
+  var bdate = d3.timeParse('%d-%m-%Y')(b);
+  return a-b;
+});
+
+dailybulletin_keys.forEach(function(key) {
   var curdate = d3.timeParse('%d-%m-%Y')(key);
   var item = dataIndex.daily_bulletin[key];
   dates.push(key);
