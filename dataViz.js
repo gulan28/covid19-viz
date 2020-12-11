@@ -56,7 +56,7 @@ var dates = [],
 var dailybulletin_keys = Object.keys(dataIndex.daily_bulletin).sort(function(a, b){
   var adate = d3.timeParse('%d-%m-%Y')(a);
   var bdate = d3.timeParse('%d-%m-%Y')(b);
-  return a-b;
+  return adate-bdate;
 });
 
 dailybulletin_keys.forEach(function(key) {
@@ -74,7 +74,7 @@ dailybulletin_keys.forEach(function(key) {
   var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodayDoneSample * 100 : 0);
   tpRate.push(tpRateToday.toFixed(2));
   // subtracted 4. refer to https://dashboard.kerala.gov.in/dailyreporting.php
-  recovered.push((item.total_positive - (item.total_active + item.deaths + 143)));
+  recovered.push((item.total_positive - (item.total_active + item.deaths + 148)));
 });
 
 tpRateMovAvg = movingAvg(7, positiveToday, totSample);
