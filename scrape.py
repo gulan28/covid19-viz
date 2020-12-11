@@ -152,6 +152,8 @@ def get_quarantine_details(date):
         data_dict["dist_code"] = district
         data_dict["district"] = district_map[district]
         csv_data.append(data_dict)
+    # did we get all districts + total
+    assert len(csv_data) == 15
     return csv_data
 
 

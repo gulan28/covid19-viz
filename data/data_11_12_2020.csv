@@ -1,2 +1,2 @@
-recovered,observation,hospitalized_today,deaths,confirmed,district,total_hospitalized,isolation,active
-596593,0,0,2562,658683,Total,0,0,59380
+isolation,district,hospitalized_today,recovered,active,deaths,observation,total_hospitalized,confirmed
+0,Total,0,596593,59380,2562,0,0,658683
