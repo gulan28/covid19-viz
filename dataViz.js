@@ -74,7 +74,7 @@ dailybulletin_keys.forEach(function(key) {
   var tpRateToday = (item.positive_today > 0 ? item.positive_today / totTodayDoneSample * 100 : 0);
   tpRate.push(tpRateToday.toFixed(2));
   // subtracted 4. refer to https://dashboard.kerala.gov.in/dailyreporting.php
-  recovered.push((item.total_positive - (item.total_active + item.deaths + 189)));
+  recovered.push((item.total_positive - (item.total_active + item.deaths + 195)));
 });
 
 tpRateMovAvg = movingAvg(7, positiveToday, totSample);
