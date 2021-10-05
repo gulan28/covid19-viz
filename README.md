@@ -1,3 +1,5 @@
+This project has been discontinued and the repository is maintained in an archived state. I thank everyone who contributed to the project.
+
 ## README
 
 This is a visualisation of COVID-19 spread in Kerala courtesy [http://dhs.kerala.gov.in/](http://dhs.kerala.gov.in/)
